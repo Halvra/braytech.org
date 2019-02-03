@@ -8,8 +8,6 @@ class ObservedImage extends React.Component {
       downloaded: false,
       styles: {}
     };
-
-    this.observe = this.observe.bind(this);
   }
 
   observe = () => {
@@ -81,12 +79,14 @@ class ObservedImage extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.src !== this.props.src) {
       this.setState({
         downloaded: false,
         styles: {}
       });
+    }
+    if (prevState !== this.state && !this.observer) {
       this.observe();
     }
   }

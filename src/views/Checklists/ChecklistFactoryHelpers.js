@@ -48,9 +48,7 @@ class ChecklistFactoryHelpers {
   }
 
   checklistItems(checklistId, isCharacterBound) {
-    const progressionSource = isCharacterBound
-      ? this.profile.characterProgressions.data[this.characterId]
-      : this.profile.profileProgression.data;
+    const progressionSource = isCharacterBound ? this.profile.characterProgressions.data[this.characterId] : this.profile.profileProgression.data;
     const progression = progressionSource.checklists[checklistId];
     const checklist = this.manifest.DestinyChecklistDefinition[checklistId];
 
@@ -86,8 +84,7 @@ class ChecklistFactoryHelpers {
     const lore = record && manifest.DestinyLoreDefinition[record.loreHash];
 
     // If we don't have a bubble, see if we can infer one from the bubble ID
-    let bubbleName =
-      (bubble && bubble.displayProperties.name) || (mapping.bubbleId && manualBubbleNames[mapping.bubbleId]) || false;
+    let bubbleName = (bubble && bubble.displayProperties.name) || (mapping.bubbleId && manualBubbleNames[mapping.bubbleId]) || false;
 
     return {
       destination: destination && destination.displayProperties.name,
@@ -114,7 +111,7 @@ class ChecklistFactoryHelpers {
       .map(hash => {
         const item = this.manifest.DestinyRecordDefinition[hash];
         const profileRecord = this.profile.profileRecords.data.records[hash];
-        if (!profileRecord) return;
+        if (!profileRecord) return false;
         const completed = profileRecord.objectives[0].complete;
 
         const mapping = mappings.records[hash];
@@ -124,10 +121,7 @@ class ChecklistFactoryHelpers {
         const bubble = destination && find(destination.bubbles, { hash: mapping.bubbleHash });
 
         // If we don't have a bubble, see if we can infer one from the bubble ID
-        let bubbleName =
-          (bubble && bubble.displayProperties.name) ||
-          (mapping && mapping.bubbleId && manualBubbleNames[mapping.bubbleId]) ||
-          '';
+        let bubbleName = (bubble && bubble.displayProperties.name) || (mapping && mapping.bubbleId && manualBubbleNames[mapping.bubbleId]) || '';
 
         return {
           place: place && place.displayProperties.name,
@@ -174,13 +168,7 @@ class ChecklistFactoryHelpers {
     const visible = this.hideCompletedItems ? items.filter(i => !i.completed) : items;
 
     const checklist = (
-      <Checklist
-        name={options.name}
-        binding={options.binding}
-        progressDescription={options.progressDescription}
-        totalItems={items.length}
-        completedItems={items.filter(i => i.completed).length}
-      >
+      <Checklist name={options.name} binding={options.binding} progressDescription={options.progressDescription} totalItems={items.length} completedItems={items.filter(i => i.completed).length}>
         {visible.map(i => (
           <ChecklistItem key={i.hash} completed={i.completed} mapPath={options.mapPath(i)}>
             <div className='text'>

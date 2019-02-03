@@ -1,13 +1,14 @@
 import React from 'react';
 import cx from 'classnames';
-import ObservedImage from '../ObservedImage';
-import '../../utils/destinyEnums';
+
+import ObservedImage from '../../ObservedImage';
 
 const mod = (manifest, item) => {
-  let traits = [];
+
+  let plugs = [];
   item.perks.forEach(perk => {
     let plug = manifest.DestinySandboxPerkDefinition[perk.perkHash];
-    traits.push(
+    plugs.push(
       <div key={plug.hash} className='plug trait'>
         <ObservedImage className={cx('image', 'icon')} src={`https://www.bungie.net${plug.displayProperties.icon}`} />
         <div className='text'>
@@ -31,7 +32,7 @@ const mod = (manifest, item) => {
   return (
     <>
       {stats.length > 0 ? <div className='stats'>{stats}</div> : null}
-      <div className={cx('sockets', { hasTraits: traits.length > 0 })}>{traits.length > 0 ? traits : null}</div>
+      <div className={cx('sockets', { 'has-sockets': plugs.length > 0 })}>{plugs.length > 0 ? plugs : null}</div>
       {item.itemSubType === 21 ? <div className='description'>
         <pre>{item.displayProperties.description}</pre>
       </div> : null}

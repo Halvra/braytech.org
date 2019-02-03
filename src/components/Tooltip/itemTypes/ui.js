@@ -1,7 +1,7 @@
 import React from 'react';
-import '../../utils/destinyEnums';
+import '../../../utils/destinyEnums';
 
-const perk = (manifest, item) => {
+const ui = (manifest, item) => {
 
   let description = item.displayProperties.description !== '' ? item.displayProperties.description : false;
 
@@ -16,4 +16,4 @@ const perk = (manifest, item) => {
   );
 };
 
-export default perk;
+export default ui;

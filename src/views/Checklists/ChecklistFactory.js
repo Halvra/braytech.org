@@ -1,11 +1,9 @@
 import sortBy from 'lodash/sortBy';
 import React from 'react';
-import find from 'lodash/find';
 
 import Checklist from './Checklist';
 import ChecklistItem from './ChecklistItem';
 import ChecklistFactoryHelpers from './ChecklistFactoryHelpers';
-import mappings from '../../data/mappings';
 
 import ReactMarkdown from 'react-markdown';
 
@@ -127,13 +125,7 @@ class ChecklistFactory {
     items = sortBy(items, i => [i.hash]);
 
     const checklist = (
-      <Checklist
-        name={this.t("Cayde's Journals")}
-        binding={this.t('Profile bound')}
-        progressDescription={this.t('Journals recovered')}
-        totalItems={items.length}
-        completedItems={items.filter(i => i.completed).length}
-      >
+      <Checklist name={this.t("Cayde's Journals")} binding={this.t('Profile bound')} progressDescription={this.t('Journals recovered')} totalItems={items.length} completedItems={items.filter(i => i.completed).length}>
         {items.map(i => (
           <ChecklistItem key={i.hash} completed={i.completed}>
             <ReactMarkdown className='text' source={i.item.displayProperties.description} />
@@ -152,7 +144,7 @@ class ChecklistFactory {
   ghostStories() {
     return this.m.recordChecklist({
       name: this.t('Ghost Stories'),
-      // icon: 'destiny-sleeper_nodes',
+      icon: 'destiny-book_ghost_stories',
       items: this.m.presentationItems(1420597821),
       progressDescription: this.t('Stories found')
     });
@@ -161,7 +153,7 @@ class ChecklistFactory {
   awokenOfTheReef() {
     return this.m.recordChecklist({
       name: this.t('Awoken of the Reef'),
-      // icon: 'destiny-sleeper_nodes',
+      icon: 'destiny-book_awoken_reef',
       items: this.m.presentationItems(3305936921),
       progressDescription: this.t('Crystals scanned')
     });
@@ -170,9 +162,9 @@ class ChecklistFactory {
   forsakenPrince() {
     return this.m.recordChecklist({
       name: this.t('Forsaken Prince'),
-      // icon: 'destiny-sleeper_nodes'
+      icon: 'destiny-book_forsaken_prince',
       items: this.m.presentationItems(655926402),
-      progressDescription: this.t('Lore scanned') // I have no idea what these things are that we're scanning?
+      progressDescription: this.t('Data caches decrypted')
     });
   }
 }

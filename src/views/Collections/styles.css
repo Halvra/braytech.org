@@ -2,14 +2,36 @@
   padding: 4rem 3rem 3rem;
 }
 
-#collections .sub-header {
-  margin: 0 0 2rem;
+#collections.root {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-gap: 3rem;
+}
+
+#collections .parent {
   width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+#collections .parent .node {
+  flex-basis: 10rem;
+  justify-content: center;
+  margin: 0 0 1rem;
+}
+
+#collections .parent .node a {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#collections .parent .node a:hover {
+  color: rgba(255, 255, 255, 1);
 }
 
 #collections .sidebar {
-  flex-basis: calc(100% / 3);
-  margin: 0 0 0 3rem;
   width: 100%;
   display: flex;
   flex-flow: row wrap;
@@ -18,7 +40,7 @@
 
 #collections .sidebar .recently-discovered {
   flex-basis: 100%;
-  margin: 0 0 3rem;
+  margin: 0 0 2rem;
 }
 
 #collections .sidebar .recently-discovered .list {
@@ -106,7 +128,6 @@
 }
 
 #collections .nodes {
-  flex-basis: calc(100% / 3 * 2 - 3rem);
   width: 100%;
   display: flex;
   flex-flow: row wrap;
@@ -115,7 +136,7 @@
 
 #collections .parent .list {
   flex-basis: 100%;
-  margin: 0 0 3rem;
+  margin: 0 0 1rem;
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: 1fr 1fr 1fr;
@@ -447,16 +468,16 @@
     padding: 3rem 2rem 2rem;
   }
 
+  #collections.root {
+    grid-template-columns: 1fr;
+    grid-gap: 2rem;
+  }
+
   #collections .header .name {
     font-size: 24px;
   }
 
-  #collections .nodes {
-    flex-basis: 100%;
-  }
-
   #collections .sidebar {
-    flex-basis: 100%;
     margin: 0;
   }
 

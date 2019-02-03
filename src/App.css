@@ -487,10 +487,9 @@ button.square.active {
   user-select: none;
 }
 
-/* html.backdropfilter .sticky-nav {
-  background-color: rgba(0, 0, 0, 0);
-  backdrop-filter: blur(3px) brightness(0.9);
-} */
+html.backdropfilter .sticky-nav{
+  backdrop-filter: blur(7px) brightness(1.2);
+}
 
 .sticky-nav i {
   vertical-align: -2px;
@@ -515,4 +514,16 @@ button.square.active {
 
 .wrapper.dark-mode .sticky-nav {
   background-color: hsla(0, 0%, 16%, 0.8);
+}
+
+@keyframes animation-backround-highlight {
+  0% {
+    background-color: rgba(255, 255, 255, 0);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    background-color: rgba(255, 255, 255, 0);
+  }
 }

@@ -1,9 +1,6 @@
 import React from 'react';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 import cx from 'classnames';
-import packageJSON from '../../../package.json';
 
 import ObservedImage from '../../components/ObservedImage';
 import ProgressBar from '../../components/ProgressBar';
@@ -14,13 +11,13 @@ import './styles.css';
 class HeaderProfile extends React.Component {
   constructor(props) {
     super(props);
-    this.manifest = props.manifest;
     this.state = {
-      mobileNavOpen: false
+      mobileNavOpen: false,
+      lastUpdate: false,
+      updateFlash: false,
     };
 
-    this.TriggerClickHandler = this.TriggerClickHandler.bind(this);
-    this.NavlinkClickHandler = this.NavlinkClickHandler.bind(this);
+    this.updateFlash = false;
   }
 
   TriggerClickHandler = () => {
@@ -37,13 +34,24 @@ class HeaderProfile extends React.Component {
     }
   };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.profile.data.updated !== this.props.profile.data.updated && this.state.lastUpdate !== this.props.profile.data.updated && !this.state.updateFlash) {
+      this.setState({ lastUpdate: this.props.profile.data.updated, updateFlash: true })
+    }
+    if (this.state.updateFlash) {
+      window.setTimeout(() => {
+        this.setState({ updateFlash: false })
+      }, 1000);
+    }
+  }
+
   render() {
     const manifest = this.props.manifest;
-    const characterId = this.props.characterId;
 
-    let profile = this.props.data.profile.profile.data;
-    let characters = this.props.data.profile.characters.data;
-    let characterProgressions = this.props.data.profile.characterProgressions.data;
+    let characterId = this.props.profile.characterId;
+    let profile = this.props.profile.data.profile.profile.data;
+    let characters = this.props.profile.data.profile.characters.data;
+    let characterProgressions = this.props.profile.data.profile.characterProgressions.data;
 
     let character = characters.find(character => character.characterId === characterId);
 
@@ -72,7 +80,7 @@ class HeaderProfile extends React.Component {
     );
 
     let viewsInline = false;
-    if (this.props.viewport.width >= 1300) {
+    if (this.props.viewport.width >= 1360) {
       viewsInline = true;
     }
 
@@ -100,7 +108,7 @@ class HeaderProfile extends React.Component {
           <div className='logo'>
             <Link to='/'>
               <span className='destiny-clovis_bray_device' />
-              Braytech {packageJSON.version}
+              Braytech
             </Link>
           </div>
           {!viewsInline ? (
@@ -118,7 +126,7 @@ class HeaderProfile extends React.Component {
           ) : null}
         </div>
         <div className='profile'>
-          <div className='background'>
+          <div className={cx('background', { 'update-flash': this.state.updateFlash })}>
             <ObservedImage
               className={cx('image', 'emblem', {
                 missing: emblemDefinition.redacted
@@ -138,7 +146,7 @@ class HeaderProfile extends React.Component {
                   />
                   <div className='displayName'>{profile.userInfo.displayName}</div>
                   <div className='basics'>
-                    {character.baseCharacterLevel} / {classHashToString(character.classHash, this.manifest, character.genderType)} / <span className='light'>{character.light}</span>
+                    {character.baseCharacterLevel} / {classHashToString(character.classHash, this.props.manifest, character.genderType)} / <span className='light'>{character.light}</span>
                   </div>
                   <ProgressBar
                     classNames={{
@@ -155,7 +163,7 @@ class HeaderProfile extends React.Component {
                   <Link
                     to={{
                       pathname: '/character-select',
-                      state: { from: this.props.location }
+                      state: { from: this.props.route.location }
                     }}
                   />
                 </li>
@@ -170,14 +178,4 @@ class HeaderProfile extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    theme: state.theme
-  };
-}
-
-export default compose(
-  connect(
-    mapStateToProps
-  )
-)(HeaderProfile);
+export default HeaderProfile;

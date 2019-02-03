@@ -1,6 +1,8 @@
 import React from 'react';
 import cx from 'classnames';
 
+import { stringToIcons } from '../../utils/destinyUtils';
+
 import './styles.css';
 
 class ProgressBar extends React.Component {
@@ -11,11 +13,13 @@ class ProgressBar extends React.Component {
   }
 
   render() {
-    let { progressDescription, completionValue, allowOvercompletion = true } = this.props.objectiveDefinition;
+    let { progressDescription = '', completionValue, allowOvercompletion = true } = this.props.objectiveDefinition;
     let { complete = false, progress, objectiveHash } = this.props.playerProgress;
     let classNames = this.props.classNames;
     let hideCheck = this.props.hideCheck;
     let chunky = this.props.chunky;
+
+    progressDescription = stringToIcons(progressDescription);
 
     progress = allowOvercompletion ? progress : Math.min(progress, completionValue);
     let wholeFraction = completionValue === 1 ? true : false;

@@ -17,7 +17,7 @@ class Collectibles extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.quaternaryHash && this.scrollToRecordRef.current !== null) {
+    if (this.props.highlight && this.scrollToRecordRef.current !== null) {
       window.scrollTo({
         top: this.scrollToRecordRef.current.offsetTop + this.scrollToRecordRef.current.offsetHeight / 2 - window.innerHeight / 2
       });
@@ -32,7 +32,6 @@ class Collectibles extends React.Component {
     const profileCollectibles = this.props.profile.data.profile.profileCollectibles.data;
 
     const highlight = this.props.highlight;
-
     let collectibles = [];
 
     if (this.props.node) {
@@ -97,9 +96,10 @@ class Collectibles extends React.Component {
             state = scope.state;
           }
 
-          if (enumerateCollectibleState(state).invisible) {
+          if (this.props.collectibles.hideInvisibleCollectibles && enumerateCollectibleState(state).invisible) {
             return;
           }
+
           // eslint-disable-next-line eqeqeq
           let ref = highlight == collectibleDefinition.hash ? this.scrollToRecordRef : null;
 
@@ -199,7 +199,7 @@ class Collectibles extends React.Component {
           state = scope.state;
         }
 
-        if (enumerateCollectibleState(state).invisible) {
+        if (this.props.collectibles.hideInvisibleCollectibles && enumerateCollectibleState(state).invisible) {
           return;
         }
 
@@ -230,7 +230,8 @@ class Collectibles extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile
+    profile: state.profile,
+    collectibles: state.collectibles
   };
 }
 

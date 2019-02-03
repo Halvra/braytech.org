@@ -8,10 +8,11 @@ import cx from 'classnames';
 import ObservedImage from '../../components/ObservedImage';
 import { enumerateRecordState } from '../../utils/destinyEnums';
 import RecordsAlmost from '../../components/RecordsAlmost';
+import RecordsTracked from '../../components/RecordsTracked';
 
 class Root extends React.Component {
   render() {
-    const {t} = this.props;
+    const { t } = this.props;
     const manifest = this.props.manifest;
     const characterId = this.props.profile.characterId;
 
@@ -105,23 +106,44 @@ class Root extends React.Component {
               recordsStates.push(scope);
             } else {
               // console.log(`107 Undefined state for ${record.recordHash}`);
-              states.push({ state: 0 });
-              recordsStates.push({ state: 0 });
+              // states.push({ state: 0 });
+              // recordsStates.push({ state: 0 });
             }
           });
         });
       });
 
+      // console.log(
+      //   node.displayProperties.name,
+      //   states.length,
+      //   states.filter(record => enumerateRecordState(record.state).canEquipTitle).length,
+      //   states.filter(record => enumerateRecordState(record.state).entitlementUnowned).length,
+      //   states.filter(record => enumerateRecordState(record.state).invisible).length,
+      //   states.filter(record => enumerateRecordState(record.state).objectiveNotCompleted).length,
+      //   states.filter(record => enumerateRecordState(record.state).obscured).length,
+      //   states.filter(record => enumerateRecordState(record.state).recordRedeemed).length,
+      //   states.filter(record => enumerateRecordState(record.state).rewardUnavailable).length
+      // );
+      // console.log(
+      //   node.displayProperties.name,
+      //   states.length - states.filter(record => enumerateRecordState(record.state).invisible).length - states.filter(record => enumerateRecordState(record.state).obscured).length
+      // )
+
+      let nodeCompleted = states.filter(record => enumerateRecordState(record.state).recordRedeemed).length;
+      let nodeTotal = states.filter(record => !enumerateRecordState(record.state).invisible).length;
+
       nodes.push(
-        <div key={node.hash} className='node'>
-          <Link to={`/triumphs/${node.hash}`}>
-            <ObservedImage className={cx('image', 'icon')} src={`https://www.bungie.net${node.originalIcon}`} />
-            {node.displayProperties.name}
-          </Link>
-          <div className='state'>
-            <span>{states.filter(record => enumerateRecordState(record.state).recordRedeemed).length}</span> / {states.filter(record => !enumerateRecordState(record.state).invisible).length}
+        <li key={node.hash} className='linked'>
+          <div className='progress-bar-background' style={{ width: `${(nodeCompleted / nodeTotal) * 100}%` }} />
+          <ObservedImage className={cx('image', 'icon')} src={`https://www.bungie.net${node.originalIcon}`} />
+          <div className='displayProperties'>
+            <div className='name'>{node.displayProperties.name}</div>
+            <div className='value'>
+              <span>{nodeCompleted}</span> / {nodeTotal}
+            </div>
           </div>
-        </div>
+          <Link to={`/triumphs/${node.hash}`} />
+        </li>
       );
     });
 
@@ -133,55 +155,67 @@ class Root extends React.Component {
         let scope = profileRecords[record.recordHash] ? profileRecords[record.recordHash] : characterRecords[characterId].records[record.recordHash];
         if (scope) {
           states.push(scope);
-          recordsStates.push(scope);
         } else {
           // console.log(`138 Undefined state for ${record.recordHash}`);
         }
       });
 
+      let sealCompleted = sealBars[node.hash].completed;
+      let sealToal = sealBars[node.hash].total;
+
       sealNodes.push(
-        <div
+        <li
           key={node.hash}
-          className={cx('node', {
+          className={cx('linked', {
             completed: sealBars[node.hash].completed === sealBars[node.hash].total
           })}
         >
-          <Link to={`/triumphs/seal/${node.hash}`}>
-            <ObservedImage className={cx('image', 'icon')} src={`/static/images/extracts/badges/${sealBars[node.hash].image}`} />
-            {node.displayProperties.name}
-          </Link>
-          <div className='state'>
-            <span>{sealBars[node.hash].completed}</span> / {sealBars[node.hash].total}
+          <div className='progress-bar-background' style={{ width: `${(sealCompleted / sealToal) * 100}%` }} />
+          <ObservedImage className={cx('image', 'icon')} src={`/static/images/extracts/badges/${sealBars[node.hash].image}`} />
+          <div className='displayProperties'>
+            <div className='name'>{node.displayProperties.name}</div>
+            <div className='value'>
+              <span>{sealCompleted}</span> / {sealToal}
+            </div>
           </div>
-        </div>
+          <Link to={`/triumphs/seal/${node.hash}`} />
+        </li>
       );
     });
 
     return (
       <>
-        <div className='parent-nodes'>
-          <div className='sub-header'>
+        <div className='module'>
+          <div className='sub-header sub'>
+            <div>{t('Total score')}</div>
+          </div>
+          <div className='total-score'>{this.props.profile.data.profile.profileRecords.data.score}</div>
+          <div className='sub-header sub'>
             <div>{t('Triumphs')}</div>
             <div>
               {recordsStates.filter(record => enumerateRecordState(record.state).recordRedeemed).length}/{recordsStates.filter(record => !enumerateRecordState(record.state).invisible).length}
             </div>
           </div>
-          <div className='nodes'>{nodes}</div>
-          <div className='sub-header'>
+          <ul className='list parents'>{nodes}</ul>
+          <div className='sub-header sub'>
             <div>{t('Seals')}</div>
           </div>
-          <div className='nodes seals'>{sealNodes}</div>
+          <ul className='list parents seals'>{sealNodes}</ul>
         </div>
-        <div className='sidebar'>
-          <div className='sub-header'>
-            <div>{t('Total score')}</div>
-          </div>
-          <div className='total-score'>{this.props.profile.data.profile.profileRecords.data.score}</div>
-          <div className='sub-header'>
+        <div className='module'>
+          <div className='sub-header sub'>
             <div>{t('Almost complete')}</div>
           </div>
           <div className='almost-complete'>
-            <RecordsAlmost {...this.props} limit='3' pageLink />
+            <RecordsAlmost {...this.props} limit='4' pageLink />
+          </div>
+        </div>
+        <div className='module'>
+          <div className='sub-header sub'>
+            <div>{t('Tracked records')}</div>
+          </div>
+          <div className='tracked'>
+            <RecordsTracked {...this.props} limit='4' pageLink />
           </div>
         </div>
       </>

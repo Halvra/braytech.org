@@ -2,40 +2,57 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import getProfile from '../../utils/getProfile';
-import setProfile from '../../utils/setProfile';
+import store from '../../utils/reduxStore';
 
-const AUTO_REFRESH_INTERVAL = 20 * 1000;
-const ONE_HOUR = 60 * 60 * 1000;
+const AUTO_REFRESH_INTERVAL = 30 * 1000;
+const TIMEOUT = 60 * 60 * 1000;
 
 class RefreshService extends React.Component {
-
   running = false;
 
   componentDidMount() {
-    if (this.props.refreshService.config.enabled) {
-      this.track();
-      document.addEventListener('click', this.clickHandler);
-      document.addEventListener('visibilitychange', this.visibilityHandler);
-
-      this.startTimer();
-    }
+    this.init();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.profile.data !== this.props.profile.data) {
-      this.clearTimer();
-      this.startTimer();
+    if (prevProps.profile.data !== this.props.profile.data || prevProps.refreshService.config.enabled !== this.props.refreshService.config.enabled) {
+      if (prevProps.refreshService.config.enabled !== this.props.refreshService.config.enabled) {
+        if (this.props.refreshService.config.enabled) {
+          this.init();
+        } else {
+          this.quit();
+        }
+      } else {
+        this.clearInterval();
+        this.startInterval();
+      }
     }
   }
 
   componentWillUnmount() {
-    document.removeEventListener('click', this.clickHandler);
-    document.removeEventListener('visibilitychange', this.visibilityHandler);
-    this.clearTimer();
+    this.quit();
   }
 
   render() {
     return null;
+  }
+
+  init() {
+    if (this.props.refreshService.config.enabled) {
+      console.log('RefreshService: init');
+      this.track();
+      document.addEventListener('click', this.clickHandler);
+      document.addEventListener('visibilitychange', this.visibilityHandler);
+
+      this.startInterval();
+    }
+  }
+
+  quit() {
+    console.log('RefreshService: quit');
+    document.removeEventListener('click', this.clickHandler);
+    document.removeEventListener('visibilitychange', this.visibilityHandler);
+    this.clearInterval();
   }
 
   track() {
@@ -46,16 +63,13 @@ class RefreshService extends React.Component {
     return Date.now() - this.lastActivityTimestamp <= timespan;
   }
 
-  startTimer() {
+  startInterval() {
     // console.log('starting a timer');
-    this.refreshAccountDataInterval = window.setTimeout(
-      this.service,
-      AUTO_REFRESH_INTERVAL
-    );
+    this.refreshAccountDataInterval = window.setInterval(this.service, AUTO_REFRESH_INTERVAL);
   }
 
-  clearTimer() {
-    window.clearTimeout(this.refreshAccountDataInterval);
+  clearInterval() {
+    window.clearInterval(this.refreshAccountDataInterval);
   }
 
   clickHandler = () => {
@@ -69,43 +83,22 @@ class RefreshService extends React.Component {
     }
   };
 
-  service = (membershipType = this.props.profile.membershipType, membershipId = this.props.profile.membershipId) => {
-
-    if (!this.activeWithinTimespan(ONE_HOUR)) {
+  service = async () => {
+    if (!this.activeWithinTimespan(TIMEOUT)) {
       return;
     }
 
-    if (this.running) {
-      console.warn('service was called though it was already running!');
-      return;
-    } else {
-      this.running = true;
+    const profile = this.props.profile;
+    try {
+      const data = await getProfile(profile.membershipType, profile.membershipId);
+      store.dispatch({
+        type: 'PROFILE_LOADED',
+        payload: data
+      });
+    } catch (error) {
+      console.warn(`Error while refreshing profile, ignoring: ${error}`);
     }
-  
-    // just for the console.warn
-    // let time = new Date();
-    // console.log("refreshing profile data", time, this.props);
-    
-    getProfile(membershipType, membershipId, this.props.profile.characterId, (callback) => {
-
-      if (!callback.loading && callback.error) {
-        if (callback.error === 'fetch') {
-          // TO DO: error count - fail after 3
-          // console.log(membershipType, membershipId, state.profile.characterId, callback.data);
-          this.running = false;
-          // setProfile with previous data - triggers componentDidUpdate in App.js to fire this service again
-          setProfile(membershipType, membershipId, this.props.profile.characterId, callback.data);
-        }
-        return;
-      }
-
-      if (!callback.loading && this.props.profile.membershipId === membershipId) {
-        this.running = false;
-        // setProfile with new data - triggers componentDidUpdate in App.js to fire this service again
-        setProfile(membershipType, membershipId, this.props.profile.characterId, callback.data);
-      }
-    });
-  }
+  };
 }
 
 function mapStateToProps(state, ownProps) {

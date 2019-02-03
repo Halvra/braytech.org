@@ -62,7 +62,6 @@ class NotificationProgress extends React.Component {
 
   componentDidUpdate(prevProps) {
 
-    console.log(this)
     this.timeOut();
 
     const fresh = this.props.profile.data;
@@ -73,8 +72,12 @@ class NotificationProgress extends React.Component {
       return;
     }
 
+    if (prevProps.profile.membershipId !== this.props.profile.membershipId) {
+      return;
+    }
+
     // console.log('characters', difference(fresh.profile.characters, stale.profile.characters));
-    console.log('profileRecords', difference(fresh.profile.profileRecords.data.records, stale.profile.profileRecords.data.records));
+    // console.log('profileRecords', difference(fresh.profile.profileRecords.data.records, stale.profile.profileRecords.data.records));
     // console.log('characterRecords', difference(fresh.profile.characterRecords.data[characterId].records, stale.profile.characterRecords.data[characterId].records));
     // console.log('profileProgression', difference(fresh.profile.profileProgression, stale.profile.profileProgression));
     // console.log('characterProgressions', difference(fresh.profile.characterProgressions.data[characterId], stale.profile.characterProgressions.data[characterId]));
@@ -100,7 +103,7 @@ class NotificationProgress extends React.Component {
           return;
         }
         let state = enumerateRecordState(profileRecords[key].state);
-        console.log(state);
+        //console.log(state);
         if (!state.objectiveNotCompleted && !state.recordRedeemed) {
           if (progress.hash) {
             progress.number = progress.number + 1;
@@ -162,7 +165,7 @@ class NotificationProgress extends React.Component {
       let description = record.displayProperties.description !== '' ? record.displayProperties.description : false;
           description = !description && record.loreHash ? manifest.DestinyLoreDefinition[record.loreHash].displayProperties.description.slice(0, 117).trim() + '...' : description;
       return (
-        <div id='notification-progress' className={cx('record', { timedOut: this.state.progress.timedOut })}>
+        <div id='notification-progress' className={cx('record', { lore: record.loreHash, timedOut: this.state.progress.timedOut })}>
           <div className='type'>
             <div className='text'>Triumph completed</div>
           </div>

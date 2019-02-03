@@ -9,6 +9,7 @@ import Root from './Root';
 import SealNode from './SealNode';
 import PresentationNode from './PresentationNode';
 import AlmostComplete from './AlmostComplete';
+import Tracked from './Tracked';
 
 import './styles.css';
 
@@ -42,7 +43,7 @@ class Triumphs extends React.Component {
   componentDidUpdate(prevProps) {
     if (
       (!this.props.match.params.quaternary && prevProps.location.pathname !== this.props.location.pathname) 
-      && (!prevProps.match.params.quaternary && this.props.location.pathname === '/triumphs/almost-complete')
+      || (!prevProps.match.params.quaternary && this.props.location.pathname === '/triumphs/almost-complete' && prevProps.location.pathname !== this.props.location.pathname)
     ) {
       window.scrollTo(0, 0);
     }
@@ -74,7 +75,7 @@ class Triumphs extends React.Component {
 
     if (!primaryHash) {
       return (
-        <div className={cx('view', 'presentation-node', this.props.theme.selected)} id='triumphs'>
+        <div className={cx('view', 'presentation-node', 'root', this.props.theme.selected)} id='triumphs'>
           <Root {...this.props} />
         </div>
       );
@@ -117,10 +118,29 @@ class Triumphs extends React.Component {
           </div>
         </>
       );
+    } else if (primaryHash === 'tracked') {
+      return (
+        <>
+          <div className={cx('view', this.props.theme.selected)} id='triumphs'>
+            <Tracked {...this.props} />
+          </div>
+          <div className='sticky-nav'>
+            <div />
+            <ul>
+              <li>
+                <Link to={backLinkPath}>
+                  <i className='uniF094' />
+                  {t('Back')}
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </>
+      );
     } else {
       return (
         <>
-          <div className={cx('view', 'presentation-node', this.props.theme.selected)} id='triumphs'>
+          <div className={cx('view', 'presentation-node', 'parent', this.props.theme.selected)} id='triumphs'>
             <PresentationNode {...this.props} primaryHash={primaryHash} />
           </div>
           <div className='sticky-nav'>

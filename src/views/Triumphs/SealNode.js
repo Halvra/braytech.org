@@ -86,7 +86,6 @@ class SealNode extends React.Component {
     };
 
     let sealDefinition = manifest.DestinyPresentationNodeDefinition[this.props.match.params.secondary];
-    let tertiaryHash = this.props.match.params.secondary;
 
     let completed = sealBars[sealDefinition.hash].completed === sealBars[sealDefinition.hash].total ? true : false;
 
@@ -124,7 +123,7 @@ class SealNode extends React.Component {
         </div>
         <div className='records'>
           <ul className='list no-interaction tertiary record-items'>
-            <Records {...this.props} {...this.state} node={tertiaryHash} />
+            <Records {...this.props} hashes={sealDefinition.children.records.map(child => child.recordHash)} />
           </ul>
         </div>
       </div>

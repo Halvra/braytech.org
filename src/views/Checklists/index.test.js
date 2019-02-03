@@ -13,7 +13,7 @@ function loadManifest() {
   if (fs.existsSync(filename)) {
     return JSON.parse(fs.readFileSync(filename));
   } else {
-    throw `
+    throw new Error(`
 Could not load manifest file for tests. It is ignored by git as it is 62mb uncompressed.
 ..
 Download it from Bungie by visiting https://www.bungie.net/Platform/Destiny2/Manifest/
@@ -21,7 +21,7 @@ Download it from Bungie by visiting https://www.bungie.net/Platform/Destiny2/Man
 and saving the file specified by Response.jsonWorldContentPaths.en to
 ..
 ${filename}
-        `;
+        `);
   }
 }
 
@@ -40,21 +40,7 @@ const data = require(`./__fixtures__/data.json`);
 const dataShallow = require(`./__fixtures__/data.shallow.json`);
 const t = a => a;
 
-const lists = [
-  'regionChests',
-  'lostSectors',
-  'adventures',
-  'corruptedEggs',
-  'amkaharaBones',
-  'catStatues',
-  'sleeperNodes',
-  'ghostScans',
-  'latentMemories',
-  'caydesJournals',
-  'ghostStories',
-  'awokenOfTheReef',
-  'forsakenPrince'
-];
+const lists = ['regionChests', 'lostSectors', 'adventures', 'corruptedEggs', 'amkaharaBones', 'catStatues', 'sleeperNodes', 'ghostScans', 'latentMemories', 'caydesJournals', 'ghostStories', 'awokenOfTheReef', 'forsakenPrince'];
 
 lists.forEach(l => {
   test(`Checklist ${l} matches snapshot`, () => {
@@ -75,7 +61,6 @@ test(`Checklists matches shallow snapshot`, () => {
     },
     profile: { characterId, data: dataShallow },
     theme: {},
-    showAllItems: true,
     collectibles: {},
     manifest,
     t

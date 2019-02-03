@@ -21,14 +21,14 @@ class ThisWeek extends React.Component {
     const manifest = this.props.manifest;
     const milestones = this.props.profile.data.milestones;
 
-    const resetTime = '17:00 UTC';
+    const resetTime = '17:00:00Z';
 
     const cycleInfo = {
       epoch: {
         // start of cycle in UTC
-        ascendant: new Date(`September 4 2018 ${resetTime}`).getTime(),
-        curse: new Date(`September 11 2018 ${resetTime}`).getTime(),
-        ep: new Date(`May 8 2018 ${resetTime}`).getTime()
+        ascendant: new Date(`2018-09-04T${resetTime}`).getTime(),
+        curse: new Date(`2018-09-11T${resetTime}`).getTime(),
+        ep: new Date(`2018-05-08T${resetTime}`).getTime()
       },
       cycle: {
         // how many week cycle

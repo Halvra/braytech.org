@@ -83,5 +83,85 @@
     "date": "2019-01-17T07:19:50.042Z",
     "version": "1.3.8",
     "content": "## Changes\n- Polished the edges of the new Vendors page"
+  },
+  {
+    "date": "2019-01-19T12:32:29.709Z",
+    "version": "1.3.9",
+    "content": "## Changes\n- Minor bug fixes"
+  },
+  {
+    "date": "2019-01-19T17:04:47.730Z",
+    "version": "1.3.10",
+    "content": "## Changes\n- Tooltip stuff refactoring\n- New fun time since data refresh timer for stuff"
+  },
+  {
+    "date": "2019-01-19T18:10:01.355Z",
+    "version": "1.3.11",
+    "content": "## Changes\n- Boo boo bandaid (bug fix)"
+  },
+  {
+    "date": "2019-01-20T07:10:31.064Z",
+    "version": "1.3.12",
+    "content": "## Changes\n- Improvements to RefreshService"
+  },
+  {
+    "date": "2019-01-22T18:23:09.942Z",
+    "version": "1.3.13",
+    "content": "## Changes\n- Added new icons for Ghost Stories, Awoken of the Reef, and Forsaken Prince lore checklists\n- Improved and expanded Tooltips features\n- Further refinements to RefreshService\n- Fixed an ObservedImage component bug"
+  },
+  {
+    "date": "2019-01-23T19:19:42.492Z",
+    "version": "1.3.14",
+    "content": "## Changes\n- RefreshService now on by default"
+  },
+  {
+    "date": "2019-01-25T12:27:27.199Z",
+    "version": "1.3.15",
+    "content": "## Changes\n- Characters module in Account view WIP\n- Major changes and learnings regarding tooltips and displaying instanced data for weapons and such - no idea what I'm doing really"
+  },
+  {
+    "date": "2019-01-25T23:19:31.359Z",
+    "version": "1.3.16",
+    "content": "## Changes\n- Fixed the collections badge image bug\n- more changes to tooltips\n- character module in account view bug if no weapons equipped fixed\n- no profile data vendor page bug fixed"
+  },
+  {
+    "date": "2019-01-26T12:03:12.254Z",
+    "version": "1.3.17",
+    "content": "## Changes\n- Added finishing touches on Masterwork items"
+  },
+  {
+    "date": "2019-01-29T07:28:07.909Z",
+    "version": "1.3.18",
+    "content": "## Changes\n- Triumph tracking! You can track records. No way to filter or view tracked triumphs just yet. One step at a time.\n- Lots of under the hood changes. Kinda sorta expect things to go wrong because lol they always do\n- More tooltip improvements as usual"
+  },
+  {
+    "date": "2019-01-29T17:46:56.658Z",
+    "version": "1.3.19",
+    "content": "## Changes\n- Added Lore view: access directly, without selecting a Destiny profile, or via the relevant Triumphs under lore."
+  },
+  {
+    "date": "2019-01-29T19:53:23.246Z",
+    "version": "1.3.20",
+    "content": "## Changes\n- Added intermediate covers for new lore books\n- Patched Vendors unavailable error bug thing"
+  },
+  {
+    "date": "2019-01-30T22:34:34.099Z",
+    "version": "1.3.21",
+    "content": "## Changes\n- Redesigned Triumphs root view\n- Patched a Tooltip bug\n- Fully realised tracked triumphs\n- Brought Collections root view into line with other styling"
+  },
+  {
+    "date": "2019-01-30T23:16:20.072Z",
+    "version": "1.3.22",
+    "content": "## Changes\n- Bug fixes"
+  },
+  {
+    "date": "2019-01-31T12:28:40.161Z",
+    "version": "1.3.23",
+    "content": "## Changes\n- Made initialisation error messages more helpful"
+  },
+  {
+    "date": "2019-01-31T14:12:12.710Z",
+    "version": "1.3.24",
+    "content": "## Changes\n- Added new option to settings page enabling view of invisible collectibles. Hidden by default."
   }
 ]

@@ -55,22 +55,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  animation: highlight 0.6s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
-}
-
-@keyframes highlight {
-  0%,
-  10% {
-    transform: scale(1);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0);
-  }
-  45% {
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 1);
-  }
-  100% {
-    transform: scale(1.2);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0);
-  }
+  animation: animation-backround-highlight 1s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
 }
 
 @media screen and (max-width: 1200px) {

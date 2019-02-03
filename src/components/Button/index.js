@@ -13,11 +13,12 @@ class Button extends React.Component {
   }
 
   render() {
-    const { classNames, text, action, invisible, disabled } = this.props;
+    const { classNames, text, action, invisible, disabled, lined } = this.props;
+    const theme = this.props.themeOverride || this.props.theme.selected;
 
     return (
       <button
-        className={cx(classNames, { disabled: disabled, invisible: invisible }, this.props.theme.selected)}
+        className={cx(classNames, { lined: lined, disabled: disabled, invisible: invisible }, theme)}
         onClick={() => {
           if (action) {
             action();

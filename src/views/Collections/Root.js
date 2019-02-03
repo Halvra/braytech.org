@@ -149,7 +149,7 @@ class Root extends React.Component {
     return (
       <>
         <div className='nodes'>
-          <div className='sub-header'>
+          <div className='sub-header sub'>
             <div>{t('Items')}</div>
             <div>
               {collectionsStates.filter(collectible => !enumerateCollectibleState(collectible).notAcquired).length}/{collectionsStates.filter(collectible => !enumerateCollectibleState(collectible).invisible).length}
@@ -162,13 +162,13 @@ class Root extends React.Component {
           </div>
         </div>
         <div className='sidebar'>
-          <div className='sub-header'>
+          <div className='sub-header sub'>
             <div>{t('Recently discovered')}</div>
           </div>
           <div className='recently-discovered'>
             <ul className='list'>{recentlyDiscovered}</ul>
           </div>
-          <div className='sub-header'>
+          <div className='sub-header sub'>
             <div>{t('Badges')}</div>
             <div>
               {badgesStates.length}/{parentBadges.children.presentationNodes.length}

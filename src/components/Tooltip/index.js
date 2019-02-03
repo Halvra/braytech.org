@@ -1,30 +1,26 @@
 import React from 'react';
-import cx from 'classnames';
-
-import '../../utils/destinyEnums';
+import { connect } from 'react-redux';
 
 import './styles.css';
-import fallback from './fallback';
-import weapon from './weapon';
-import armour from './armour';
-import emblem from './emblem';
-import bounty from './bounty';
-import mod from './mod';
-import perk from './perk';
+import itemTypes from './itemTypes';
 
 class Tooltip extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      hash: false
+      hash: false,
+      itemInstanceId: false,
+      itemState: false,
+      table: false
     };
 
     this.tooltip = React.createRef();
-
-    this.bindings = this.bindings.bind(this);
-    this.mouseMove = this.mouseMove.bind(this);
     this.touchMovement = false;
+    this.mouseMoveXY = {
+      x: 0,
+      y: 0
+    };
   }
 
   mouseMove = e => {
@@ -44,79 +40,122 @@ class Tooltip extends React.Component {
       x = x + offset;
     }
 
-    if (y + tooltipHeight > window.innerHeight) {
-      y = y - tooltipHeight - offset;
+    if (y + tooltipHeight + scrollbarAllowance > window.innerHeight) {
+      y = window.innerHeight - tooltipHeight - scrollbarAllowance;
     }
     y = y < 0 ? 0 : y;
 
     if (this.state.hash) {
+      this.mouseMoveXY = {
+        x,
+        y
+      };
       this.tooltip.current.style.cssText = `top: ${y}px; left: ${x}px`;
     }
   };
 
-  bindings = () => {
-    let toolTipples = document.querySelectorAll('.tooltip');
-    toolTipples.forEach(item => {
-      item.addEventListener('mouseenter', e => {
-        if (e.currentTarget.dataset.itemhash) {
-          this.setState({
-            hash: parseInt(e.currentTarget.dataset.itemhash, 10)
-          });
-        }
+  target_mouseEnter = e => {
+    if (e.currentTarget.dataset.itemhash) {
+      this.setState({
+        hash: e.currentTarget.dataset.itemhash,
+        itemInstanceId: e.currentTarget.dataset.iteminstanceid,
+        itemState: e.currentTarget.dataset.itemstate,
+        table: e.currentTarget.dataset.table ? e.currentTarget.dataset.table : false
       });
-      item.addEventListener('mouseleave', e => {
-        this.setState({
-          hash: false
-        });
-      });
-      item.addEventListener('touchstart', e => {
-        this.touchMovement = false;
-      });
-      item.addEventListener('touchmove', e => {
-        this.touchMovement = true;
-      });
-      item.addEventListener('touchend', e => {
-        if (!this.touchMovement) {
-          if (e.currentTarget.dataset.itemhash) {
-            this.setState({
-              hash: parseInt(e.currentTarget.dataset.itemhash, 10)
-            });
-          }
-        }
-      });
+    }
+  };
+
+  target_mouseLeave = e => {
+    this.setState({
+      hash: false,
+      itemInstanceId: false,
+      itemState: false,
+      table: false
     });
   };
 
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
+  target_touchStart = e => {
+    this.touchMovement = false;
+  };
+
+  target_touchMove = e => {
+    this.touchMovement = true;
+  };
+
+  target_touchEnd = e => {
+    if (!this.touchMovement) {
+      if (e.currentTarget.dataset.itemhash) {
+        this.setState({
+          hash: e.currentTarget.dataset.itemhash,
+          itemInstanceId: e.currentTarget.dataset.iteminstanceid,
+          itemState: e.currentTarget.dataset.itemstate,
+          table: e.currentTarget.dataset.table ? e.currentTarget.dataset.table : false
+        });
+      }
+    }
+  };
+
+  target_bindings = () => {
+    let targets = document.querySelectorAll('.tooltip');
+    targets.forEach(target => {
+      target.addEventListener('mouseenter', this.target_mouseEnter);
+      target.addEventListener('mouseleave', this.target_mouseLeave);
+      target.addEventListener('touchstart', this.target_touchStart);
+      target.addEventListener('touchmove', this.target_touchMove);
+      target.addEventListener('touchend', this.target_touchEnd);
+    });
+  };
+
+  tooltip_touchStart = e => {
+    this.touchMovement = false;
+  };
+
+  tooltip_touchMove = e => {
+    this.touchMovement = true;
+  };
+
+  tooltip_touchEnd = e => {
+    e.preventDefault();
+    if (!this.touchMovement) {
       this.setState({
-        hash: false
+        hash: false,
+        itemInstanceId: false,
+        itemState: false,
+        table: false
       });
-      this.bindings();
+    }
+  };
+
+  tooltip_bindings = () => {
+    this.tooltip.current.addEventListener('touchstart', this.tooltip_touchStart);
+    this.tooltip.current.addEventListener('touchmove', this.tooltip_touchMove);
+    this.tooltip.current.addEventListener('touchend', this.tooltip_touchEnd);
+  };
+
+  componentDidUpdate(prevProps) {
+    if (this.props.location && prevProps.location.pathname !== this.props.location.pathname) {
+      this.setState({
+        hash: false,
+        itemInstanceId: false,
+        itemState: false,
+        table: false
+      });
+      this.target_bindings();
+    }
+
+    if (this.props.vendors !== prevProps.vendors || this.props.profile.data !== prevProps.profile.data) {
+      this.target_bindings();
     }
 
     if (this.state.hash) {
-      this.tooltip.current.addEventListener('touchstart', e => {
-        this.touchMovement = false;
-      });
-      this.tooltip.current.addEventListener('touchmove', e => {
-        this.touchMovement = true;
-      });
-      this.tooltip.current.addEventListener('touchend', e => {
-        e.preventDefault();
-        if (!this.touchMovement) {
-          this.setState({
-            hash: false
-          });
-        }
-      });
+      this.tooltip_bindings();
     }
   }
 
   componentDidMount() {
     window.addEventListener('mousemove', this.mouseMove);
 
-    this.bindings();
+    this.target_bindings();
   }
 
   componentWillUnmount() {
@@ -124,110 +163,13 @@ class Tooltip extends React.Component {
   }
 
   render() {
-    let manifest = this.props.manifest;
+    const { manifest, profile } = this.props;
     if (this.state.hash) {
-      let item;
-      if (this.state.hash === 343) {
-        item = {
-          redacted: true
-        };
-      } else {
-        item = manifest.DestinyInventoryItemDefinition[this.state.hash];
-      }
-
-      if (item.redacted) {
-        return (
-          <div id='tooltip' ref={this.tooltip}>
-            <div className='acrylic' />
-            <div className='frame common'>
-              <div className='header'>
-                <div className='name'>Classified</div>
-                <div>
-                  <div className='kind'>Insufficient clearance</div>
-                </div>
-              </div>
-              <div className='black'>
-                <div className='description'>
-                  <pre>Keep it clean.</pre>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      let kind;
-      let tier;
-      let render;
-
-      switch (item.itemType) {
-        case 3:
-          kind = 'weapon';
-          render = weapon(manifest, item);
-          break;
-        case 2:
-          kind = 'armour';
-          render = armour(manifest, item);
-          break;
-        case 14:
-          kind = 'emblem';
-          render = emblem(manifest, item);
-          break;
-        case 26:
-          kind = 'bounty';
-          render = bounty(manifest, item);
-          break;
-        case 19:
-          if (item.inventory.bucketTypeHash === 1469714392) {
-            kind = 'perk';
-            render = perk(manifest, item);
-            break;
-          }
-          kind = 'mod';
-          render = mod(manifest, item);
-          break;
-        default:
-          kind = '';
-          render = fallback(manifest, item);
-      }
-
-      switch (item.inventory.tierType) {
-        case 6:
-          tier = 'exotic';
-          break;
-        case 5:
-          tier = 'legendary';
-          break;
-        case 4:
-          tier = 'rare';
-          break;
-        case 3:
-          tier = 'uncommon';
-          break;
-        case 2:
-          tier = 'basic';
-          break;
-        default:
-          tier = 'basic';
-      }
-
-      if (kind === 'perk') {
-        tier = 'ui';
-      }
+      let render = itemTypes(profile, manifest, { hash: this.state.hash, itemInstanceId: this.state.itemInstanceId, itemState: this.state.itemState, table: this.state.table });
 
       return (
-        <div id='tooltip' ref={this.tooltip}>
-          <div className='acrylic' />
-          <div className={cx('frame', kind, tier)}>
-            <div className='header'>
-              <div className='name'>{item.displayProperties.name}</div>
-              <div>
-                <div className='kind'>{item.itemTypeDisplayName}</div>
-                {kind !== 'perk' ? <div className='rarity'>{item.inventory.tierTypeName}</div> : null}
-              </div>
-            </div>
-            <div className='black'>{render}</div>
-          </div>
+        <div id='tooltip' ref={this.tooltip} style={{ top: `${this.mouseMoveXY.y}px`, left: `${this.mouseMoveXY.x}px` }}>
+          {render}
         </div>
       );
     } else {
@@ -236,4 +178,11 @@ class Tooltip extends React.Component {
   }
 }
 
-export default Tooltip;
+function mapStateToProps(state, ownProps) {
+  return {
+    profile: state.profile,
+    vendors: state.vendors
+  };
+}
+
+export default connect(mapStateToProps)(Tooltip);

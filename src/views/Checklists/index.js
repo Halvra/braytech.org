@@ -1,7 +1,9 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withNamespaces } from 'react-i18next';
+import PropTypes from 'prop-types';
 import cx from 'classnames';
 
 import './styles.css';
@@ -16,6 +18,27 @@ function getItemsPerPage(width) {
   return 1;
 }
 
+const ListButton = p => (
+  <li key={p.name} className='linked'>
+    <a
+      className={cx({
+        active: p.visible
+      })}
+      onClick={p.onClick}
+    >
+      <div className={p.icon} />
+      <div className='name'>{p.name}</div>
+    </a>
+  </li>
+);
+
+ListButton.propTypes = {
+  name: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  icon: PropTypes.string,
+  visible: PropTypes.bool
+};
+
 export class Checklists extends React.Component {
   constructor(props) {
     super(props);
@@ -27,34 +50,26 @@ export class Checklists extends React.Component {
   }
 
   componentDidUpdate(prev) {
-    if (prev.viewport.width !== this.props.viewport.width) {
-      this.setState({ itemsPerPage: getItemsPerPage(this.props.viewport.width) });
+    const newWidth = this.props.viewport.width;
+    if (prev.viewport.width !== newWidth) {
+      this.setState({ itemsPerPage: getItemsPerPage(newWidth) });
     }
   }
 
-  changeSkip = e => {
-    e.preventDefault();
-
-    let index = e.currentTarget.dataset.index;
-
+  changeSkip = index => {
     this.setState({
       page: Math.floor(index / this.state.itemsPerPage)
     });
   };
 
   render() {
-    const { t } = this.props;
+    const { t, profile, manifest, collectibles, theme } = this.props;
+    const { page, itemsPerPage } = this.state;
 
-    const f = new ChecklistFactory(
-      t,
-      this.props.profile.data.profile,
-      this.props.manifest,
-      this.props.profile.characterId,
-      this.props.collectibles.hideChecklistItems
-    );
+    const f = new ChecklistFactory(t, profile.data.profile, manifest, profile.characterId, collectibles.hideChecklistItems);
 
     const lists = [
-      f.regionChests(),
+      f.regionChests(), //
       f.lostSectors(),
       f.adventures(),
       f.corruptedEggs(),
@@ -68,39 +83,24 @@ export class Checklists extends React.Component {
       f.forsakenPrince()
     ];
 
-    if (
-      Object.values(this.props.profile.data.profile.profileProgression.data.checklists[2448912219]).filter(i => i)
-        .length === 4
-    ) {
+    if (Object.values(profile.data.profile.profileProgression.data.checklists[2448912219]).filter(i => i).length === 4) {
       lists.push(f.caydesJournals());
     }
 
-    let sliceStart = parseInt(this.state.page, 10) * this.state.itemsPerPage;
-    let sliceEnd = sliceStart + this.state.itemsPerPage;
+    let sliceStart = parseInt(page, 10) * itemsPerPage;
+    let sliceEnd = sliceStart + itemsPerPage;
 
-    const visible = this.props.showAllItems ? lists : lists.slice(sliceStart, sliceEnd);
+    const visible = lists.slice(sliceStart, sliceEnd);
 
     return (
-      <div className={cx('view', this.props.theme.selected)} id='checklists'>
+      <div className={cx('view', theme.selected)} id='checklists'>
         <div className='views'>
           <div className='sub-header sub'>
             <div>Checklists</div>
           </div>
           <ul className='list'>
-            {lists.map((list, index) => (
-              <li key={list.name} className='linked'>
-                <a
-                  href='/'
-                  className={cx({
-                    active: visible.includes(list)
-                  })}
-                  data-index={index}
-                  onClick={this.changeSkip}
-                >
-                  <div className={list.icon} />
-                  <div className='name'>{list.name}</div>
-                </a>
-              </li>
+            {lists.map((list, i) => (
+              <ListButton name={list.name} icon={list.icon} key={i} visible={visible.includes(list)} onClick={() => this.changeSkip(i)} />
             ))}
           </ul>
         </div>
@@ -115,6 +115,13 @@ export class Checklists extends React.Component {
     );
   }
 }
+Checklists.propTypes = {
+  profile: PropTypes.object.isRequired,
+  manifest: PropTypes.object.isRequired,
+  collectibles: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  viewport: PropTypes.object.isRequired
+};
 
 function mapStateToProps(state, ownProps) {
   return {

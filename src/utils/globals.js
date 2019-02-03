@@ -9,17 +9,29 @@ export const Globals = {
     bungie: "https://www.bungie.net"
   },
   routes: {
-    standard: ['character-select', 'pride', 'credits', 'settings', 'tools'],
+    standard: ['character-select', 'pride', 'credits', 'settings', 'resources', 'read'],
     badboys: ['vendors']
   }
 }
 
 export const isProfileRoute = (pathname, hasProfileData = false) => {
-  let view = pathname.split('/')[1];
-  if (pathname !== '/' && !Globals.routes.standard.includes(view) && !Globals.routes.badboys.includes(view)) {
+  let paths = pathname.split('/');
+  // if (paths[1] === 'collections' && paths[2] === 'inspect') {
+  //   return false;
+  // } else 
+  if (pathname !== '/' && !Globals.routes.standard.includes(paths[1]) && !Globals.routes.badboys.includes(paths[1])) {
     return true;
-  } else if (Globals.routes.badboys.includes(view) && hasProfileData) {
+  } else if (Globals.routes.badboys.includes(paths[1]) && hasProfileData) {
     return true;
+  } else {
+    return false;
+  }
+}
+
+export const themeOverride = pathname => {
+  let paths = pathname.split('/');
+  if (['read'].includes(paths[1])) {
+    return 'dark-mode ' + paths[1];
   } else {
     return false;
   }

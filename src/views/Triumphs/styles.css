@@ -2,54 +2,111 @@
   padding: 4rem 3rem 3rem;
 }
 
-#triumphs .sub-header {
-  margin: 0 0 2rem;
-  width: 100%;
+#triumphs.root {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 3rem;
 }
 
-#triumphs .sidebar {
-  flex-basis: calc(100% / 3);
-  margin: 0 0 0 3rem;
-  width: 100%;
-  display: flex;
-  flex-flow: row wrap;
-  align-content: flex-start;
+#triumphs.root .sidebar {
+  
 }
 
-#triumphs .sidebar .total-score {
-  flex-basis: 100%;
-  padding: 0 0 2rem;
+#triumphs.root .total-score {
+  padding: 0 0 1rem;
   font-size: 48px;
   text-align: center;
   font-weight: 600;
 }
 
-#triumphs .sidebar .almost-complete .list.record-items {
+#triumphs.root .almost-complete .list.record-items,
+#triumphs.root .tracked .list.record-items {
   grid-template-columns: 1fr;
 }
 
-#triumphs .sidebar .almost-complete .list.record-items li:not(:last-child) a {
+#triumphs.root .almost-complete .list.record-items li:not(:last-child) a,
+#triumphs.root .tracked .list.record-items li:not(.none-tracked):not(:last-child) a {
   position: absolute;
 }
 
-#triumphs .sidebar .almost-complete .list.record-items li:last-child {
+#triumphs.root .almost-complete .list.record-items li:last-child,
+#triumphs.root .tracked .list.record-items li:not(.none-tracked):last-child {
   height: 38px;
   background-color: initial;
 }
 
-#triumphs .sidebar .almost-complete .list.record-items li.linked:last-child {
+#triumphs.root .almost-complete .list.record-items li.linked:last-child,
+#triumphs.root .tracked .list.record-items li.linked:not(.none-tracked):last-child {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
-#triumphs .sidebar .almost-complete .list.record-items li.linked:last-child:hover {
+#triumphs.root .almost-complete .list.record-items li.linked:last-child:hover,
+#triumphs.root .tracked .list.record-items li.linked:not(.none-tracked):last-child:hover {
   background-color: rgba(255, 255, 255, 0.4);
   color: rgba(255, 255, 255, 1);
   z-index: 2;
 }
 
-#triumphs .parent-nodes {
-  flex-basis: calc(100% / 3 * 2 - 3rem);
+#triumphs .list.parents {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 3px;
+  margin: 0 0 2rem;
+}
+
+#triumphs .list.parents li {
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+  display: grid;
+  grid-template-columns: 38px auto;
+}
+
+#triumphs .list.parents li .progress-bar-background {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#triumphs .list.parents li .icon {
+  position: relative;
+  height: 38px;
+  width: 38px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#triumphs .list.parents li .displayProperties {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+#triumphs .list.parents li .displayProperties .name {
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#triumphs .list.parents li .displayProperties .value {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#triumphs .list.parents li .displayProperties .value span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#triumphs .list.parents li.completed .progress-bar-background {
+  background-color: #7b3274;
+}
+
+#triumphs .list.parents.seals li .icon {
+  background-size: 80%;
+}
+
+/* #triumphs.root .parent-nodes {
   display: flex;
   flex-flow: row wrap;
   align-content: flex-start;
@@ -162,7 +219,7 @@
 
 #triumphs .parent-nodes .node .state span {
   color: rgba(255, 255, 255, 0.8);
-}
+} */
 
 #triumphs .header {
   flex-basis: 100%;
@@ -224,10 +281,11 @@
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 #triumphs .node.seal .children .until h4.completed {
-  color: rgb(195, 178, 111);
+  color: rgb(210, 187, 95);
 }
 
 #triumphs .node.seal .children .progress {
@@ -322,13 +380,8 @@
 
 @media screen and (max-width: 1280px) {
 
-  #triumphs .parent-nodes .nodes .node {
-    flex-basis: calc(100% / 4);
-    padding: 0 2rem;
-  }
-  
-  #triumphs .node.seal {
-    margin: 1rem 0 0;
+  #triumphs.root {
+    grid-template-columns: 1fr 1fr;
   }
 
   #triumphs .node .children {
@@ -337,15 +390,8 @@
 }
 
 @media screen and (max-width: 768px) {
-
-  #triumphs .parent-nodes .nodes {
-    margin: 0 0 2rem;
-  }
-
-  #triumphs .parent-nodes .nodes .node {
-    flex-basis: calc(100% / 4);
-    padding: 0 1rem;
-    margin: 0 0 1rem;
+  #triumphs.root {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -354,19 +400,8 @@
     padding: 3rem 2rem 2rem;
   }
 
-  #triumphs .parent-nodes {
-    flex-basis: 100%;
-  }
-
-  #triumphs .parent-nodes .nodes .node {
-    flex-basis: calc(100% / 3);
-    padding: 0 1rem;
-    margin: 0 0 2rem;
-  }
-
-  #triumphs .sidebar {
-    flex-basis: 100%;
-    margin: 0;
+  #triumphs.root {
+    grid-gap: 2rem;
   }
 
   #triumphs .node.seal .children .text .name {

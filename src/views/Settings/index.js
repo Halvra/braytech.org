@@ -30,17 +30,18 @@ class Settings extends React.Component {
     let currentState = this.props.collectibles;
     let newState = currentState;
 
-    if (state === 'showAll') {
-      newState = {
-        hideTriumphRecords: false,
-        hideChecklistItems: false
-      };
-    } else {
+    // if (state === 'showAll') {
+    //   newState = {
+    //     hideTriumphRecords: false,
+    //     hideChecklistItems: false
+    //   };
+    // } else {
       newState = {
         hideTriumphRecords: state === 'hideTriumphRecords' ? !currentState.hideTriumphRecords : currentState.hideTriumphRecords,
-        hideChecklistItems: state === 'hideChecklistItems' ? !currentState.hideChecklistItems : currentState.hideChecklistItems
+        hideChecklistItems: state === 'hideChecklistItems' ? !currentState.hideChecklistItems : currentState.hideChecklistItems,
+        hideInvisibleCollectibles: state === 'hideInvisibleCollectibles' ? !currentState.hideInvisibleCollectibles : currentState.hideInvisibleCollectibles
       };
-    }
+    // }
 
     this.props.setCollectibleDisplayState(newState);
   }
@@ -87,14 +88,6 @@ class Settings extends React.Component {
     let collectiblesButtons = (
       <>
         <li
-          key='showAll'
-          onClick={() => {
-            this.selectCollectibleDisplayState('showAll');
-          }}
-        >
-          <Checkbox linked checked={!this.props.collectibles.hideTriumphRecords && !this.props.collectibles.hideChecklistItems} text={t('Show all items')} />
-        </li>
-        <li
           key='hideTriumphRecords'
           onClick={() => {
             this.selectCollectibleDisplayState('hideTriumphRecords');
@@ -109,6 +102,14 @@ class Settings extends React.Component {
           }}
         >
           <Checkbox linked checked={this.props.collectibles.hideChecklistItems} text={t('Hide completed checklist items')} />
+        </li>
+        <li
+          key='hideInvisibleCollectibles'
+          onClick={() => {
+            this.selectCollectibleDisplayState('hideInvisibleCollectibles');
+          }}
+        >
+          <Checkbox linked checked={this.props.collectibles.hideInvisibleCollectibles} text={t('Hide invisible Collection items')} />
         </li>
       </>
     );
@@ -143,7 +144,7 @@ class Settings extends React.Component {
           <div className='sub-header sub'>
             <div>{t('Refresh service')}</div>
           </div>
-          <div className='description'>{t("This is an experimental feature that will refresh the active profile's data every 20 seconds")}</div>
+          <div className='description'>{t("Refresh the active profile's data every 30 seconds")}</div>
           <ul className='list settings'>
             <li
               key='enabled'
@@ -151,7 +152,7 @@ class Settings extends React.Component {
                 this.props.setRefreshServiceConfig({
                   config: {
                     enabled: true,
-                    frequency: 20
+                    frequency: 30
                   }
                 });
               }}
@@ -164,7 +165,7 @@ class Settings extends React.Component {
                 this.props.setRefreshServiceConfig({
                   config: {
                     enabled: false,
-                    frequency: 20
+                    frequency: 30
                   }
                 });
               }}

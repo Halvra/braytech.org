@@ -30,11 +30,11 @@ class Credits extends React.Component {
             <p>Thanks to Bungie in general for a great game and a great API. Thanks to vthornheart, the boys in the DIM Slack, and for everyone who's excitement motivates me.</p>
             <p>
               The repo is at{' '}
-              <a href='https://github.com/justrealmilk/dev2.braytech.org' target='_blank' rel='noopener noreferrer'>
-                justrealmilk/dev2.braytech.org
+              <a href='https://github.com/justrealmilk/braytech.org' target='_blank' rel='noopener noreferrer'>
+                justrealmilk/braytech.org
               </a>
               .{' '}
-              <a href='https://github.com/justrealmilk/dev2.braytech.org/issues' target='_blank' rel='noopener noreferrer'>
+              <a href='https://github.com/justrealmilk/braytech.org/issues' target='_blank' rel='noopener noreferrer'>
                 Issues?
               </a>
             </p>

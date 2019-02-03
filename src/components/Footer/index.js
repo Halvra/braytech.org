@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
+import { withNamespaces } from 'react-i18next';
+import packageJSON from '../../../package.json';
 
 import './styles.css';
-import { withNamespaces } from 'react-i18next';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -14,12 +15,12 @@ class Footer extends React.Component {
 
   render() {
     const darkPaths = ['/character-select'];
-    const {t} = this.props;
-    if (this.props.route.location.pathname !== '/') {
+    const { t } = this.props;
+    // if (this.props.route.location.pathname !== '/') {
       return (
         <div id='footer' className={cx({ dark: darkPaths.includes(this.props.route.location.pathname) })}>
           <div>
-            © 2018 Tom Chapman
+            © 2019 Tom Chapman <span>{packageJSON.version}</span>
           </div>
           <ul>
             <li>
@@ -45,15 +46,15 @@ class Footer extends React.Component {
             <li>
               {/* eslint-disable-next-line jsx-a11y/accessible-emoji */}
               <a href='https://www.ko-fi.com/justrealmilk' target='_blank' rel='noopener noreferrer'>
-                {t('Buy me a Ko-fi')} ❤️
+                {t('Buy me a Ko-fi')} 🍻
               </a>
             </li>
           </ul>
         </div>
       );
-    } else {
-      return null;
-    }
+    // } else {
+    //   return null;
+    // }
   }
 }
 

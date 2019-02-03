@@ -15,7 +15,7 @@
 }
 
 #loading h4,
-#loading .download {
+#loading .status {
   flex-basis: 100%;
 }
 
@@ -23,15 +23,43 @@
   font-size: 14px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.6);
-  margin: 0 0 0.6rem;
+  color: rgba(0, 0, 0, 0.8);
+  margin: 0 0 1rem;
 }
 
-#loading .download {
+#loading .status {
   font-size: 14px;
+}
+
+#loading .status > .message {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+#loading .status:not(.error) > .message {
   letter-spacing: 2px;
-  color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.4);
   text-transform: uppercase;
+}
+
+#loading .status.error > .message {
+  opacity: 0.8;
+  color: #F44336;
+}
+
+#loading .status .detail {
+  max-width: 500px;
+  margin: 1rem auto;
+  padding: 0 2rem;
+  text-align: left;
+  display: flex;
+  align-items: flex-start;
+  opacity: 0.6;
+}
+
+#loading .status .detail .name {
+  margin: 0 6px 0 0;
 }
 
 #loading .logo-feature {
@@ -66,7 +94,7 @@
   animation: fade-in-logo-feature 7s linear forwards, rotate-logo-feature 10s linear infinite;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) {
 
   
 
@@ -82,7 +110,7 @@
   height: 136px;
 }
 
-  #loading .download {
+  #loading .status {
     padding: 0 0 3rem;
   }
 }
@@ -97,8 +125,9 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-#loading.dark-mode .download {
-  color: rgba(255, 255, 255, 0.2);
+#loading.dark-mode .status,
+#loading.dark-mode .status:not(.error) > .message {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 #loading.dark-mode .logo-feature .device::before,

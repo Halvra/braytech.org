@@ -12,11 +12,76 @@
   --rare: 213, 34%, 48%;
   --uncommon: 126, 35%, 32%;
   --common: 0, 0%, 80%;
-  --exoticDark: 43, 71%, 5%;
+  --exoticDark: 48, 71%, 5%;
   --legendaryDark: 279, 36%, 5%;
   --rareDark: 213, 34%, 6%;
   --uncommonDark: 126, 35%, 5%;
   --commonDark: 0, 0%, 7%;
+}
+
+#inspect .bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#inspect .bg::before {
+  content: "\e9e2";
+  position: absolute;
+  top: -40vh;
+  left: 0;
+  width: 100%;
+  height: 180vh;
+  font-family: 'destiny' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-feature-settings: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  font-size: 180vh;
+  color: rgba(255, 255, 255, 0.15);
+  filter: blur(10px);
+  animation: fade-in-logo-feature 7s linear forwards, rotate-logo-feature 100s linear reverse infinite;
+}
+
+#inspect .bg::after {
+  content: "\e9e1";
+  position: absolute;
+  top: -40vh;
+  left: 0;
+  width: 100%;
+  height: 180vh;
+  font-family: 'destiny' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-feature-settings: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  font-size: 180vh;
+  color: rgba(255, 255, 255, 0.3);
+  filter: blur(10px);
+  animation: fade-in-logo-feature 7s linear forwards, rotate-logo-feature 60s linear infinite;
+}
+
+#inspect .sticky-nav {
+  position: fixed;
+  background-color: hsla(0, 0%, 5%, 0.6);
 }
 
 #inspect .rarity {
@@ -24,7 +89,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 96px;
+  height: 80px;
 }
 
 #inspect .rarity.exotic {
@@ -40,7 +105,7 @@
 #inspect .properties {
   position: absolute;
   top: calc(80px + 3rem);
-  left: 3rem;
+  left: 6rem;
   width: 35rem;
 }
 
@@ -126,6 +191,16 @@
 #inspect .properties .sockets .category .sockets .socket .plug:last-child {
   margin: 0;
 }
+
+
+
+
+#inspect .properties .sockets .category.is-mods .sockets .socket .plug:not(:first-child) {
+  display: none;
+}
+
+
+
 
 #inspect .properties .sockets .category .sockets .socket .plug .text {
   display: none;

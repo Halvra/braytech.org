@@ -1,61 +1,52 @@
-
 import entities from 'entities';
 
-export const profileScrubber = response => {
-
+export const profileScrubber = profile => {
   // convert character response to an array
-  response.profile.Response.characters.data = Object.values(response.profile.Response.characters.data).sort(function(a, b) {
+  profile.characters.data = Object.values(profile.characters.data).sort(function(a, b) {
     return parseInt(b.minutesPlayedTotal) - parseInt(a.minutesPlayedTotal);
   });
 
   // remove dud ghost scans
-  delete response.profile.Response.profileProgression.data.checklists[2360931290][1116662180];
-  delete response.profile.Response.profileProgression.data.checklists[2360931290][3856710545];
-  delete response.profile.Response.profileProgression.data.checklists[2360931290][508025838];
+  delete profile.profileProgression.data.checklists[2360931290][1116662180];
+  delete profile.profileProgression.data.checklists[2360931290][3856710545];
+  delete profile.profileProgression.data.checklists[2360931290][508025838];
 
   // adjust adventures checklist state https://github.com/Bungie-net/api/issues/786
   let completed = false;
+
   // Signal Light
-  Object.values(response.profile.Response.characterProgressions.data).forEach(character => {
+  Object.values(profile.characterProgressions.data).forEach(character => {
     if (character.checklists[4178338182][844419501]) {
       completed = true;
     }
   });
-  Object.values(response.profile.Response.characterProgressions.data).forEach(character => {
+  Object.values(profile.characterProgressions.data).forEach(character => {
     if (completed) {
       character.checklists[4178338182][844419501] = true;
     }
   });
   completed = false;
   //Not Even the Darkness
-  Object.values(response.profile.Response.characterProgressions.data).forEach(character => {
+  Object.values(profile.characterProgressions.data).forEach(character => {
     if (character.checklists[4178338182][1942564430]) {
       completed = true;
     }
   });
-  Object.values(response.profile.Response.characterProgressions.data).forEach(character => {
+  Object.values(profile.characterProgressions.data).forEach(character => {
     if (completed) {
       character.checklists[4178338182][1942564430] = true;
     }
   });
   completed = false;
 
-  let scrubbed = {};
-  Object.keys(response).forEach(key => {
-    scrubbed[key] = response[key].Response;
-  })
+  return profile;
+};
 
-  return scrubbed;
-
-}
-
-export const groupScrubber = response => {
-  
-  if (response.groups.results.length > 0) {
-    response.groups.results[0].group.clanInfo.clanCallsign = entities.decodeHTML(response.groups.results[0].group.clanInfo.clanCallsign);
-    response.groups.results[0].group.name = entities.decodeHTML(response.groups.results[0].group.name);
+export const groupScrubber = groups => {
+  if (groups.results.length > 0) {
+    groups.results[0].group.clanInfo.clanCallsign = entities.decodeHTML(groups.results[0].group.clanInfo.clanCallsign);
+    groups.results[0].group.name = entities.decodeHTML(groups.results[0].group.name);
   }
 
-  return response;
-
-}
+  return groups;
+};

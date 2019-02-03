@@ -62,6 +62,9 @@
 .progress-bar .bar .text .description {
   flex: 1 1 auto;
   padding: 0 0 0 8px;
+  display: flex;
+  align-items: center;
+  white-space: pre-wrap;
 }
 
 .progress-bar .bar .text .fraction {

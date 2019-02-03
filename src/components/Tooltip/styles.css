@@ -16,12 +16,11 @@
   --rare: 213, 34%, 48%;
   --uncommon: 126, 35%, 32%;
   --common: 0, 0%, 80%;
-  --exoticDark: 43, 71%, 5%;
+  --exoticDark: 48, 71%, 5%;
   --legendaryDark: 279, 36%, 5%;
   --rareDark: 213, 34%, 6%;
   --uncommonDark: 126, 35%, 5%;
   --commonDark: 0, 0%, 7%;
-  --commonDarker: 0, 0%, 0%;
 }
 
 #tooltip .acrylic {
@@ -193,14 +192,46 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
-#tooltip .frame.emblem .source {
+#tooltip .source.no-border {
   border-top: none;
 }
 
+#tooltip .kill-tracker {
+  padding: 2px 16px 12px;
+  display: flex;
+}
+
+#tooltip .kill-tracker .icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  flex-basis: 20px;
+  background-size: contain;
+}
+
+#tooltip .kill-tracker .text {
+  flex-basis: calc(100% - 20px);
+  padding: 0 0 0 16px;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+#tooltip .kill-tracker .text .description {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#tooltip .kill-tracker .text .value {
+  color: #c6ab3c;
+  text-align: right;
+}
+
 #tooltip .stats {
-  padding: 14px 16px 8px;
+  padding: 14px 16px 6px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 #tooltip .stats .stat {
@@ -225,6 +256,7 @@
   height: 16px;
   position: relative;
   color: #fff;
+  display: flex;
 }
 
 #tooltip .stats .stat .value.bar {
@@ -236,12 +268,14 @@
   align-items: center;
 }
 
+#tooltip .stats .stat .value.masterwork {
+  color: #c6ab3c;
+}
+
 #tooltip .stats .stat .value .bar {
-  position: absolute;
-  top: 0;
-  left: 0;
   height: 100%;
   background-color: #fff;
+  position: relative;
 }
 
 #tooltip .stats .stat .value .bar::before {
@@ -259,8 +293,19 @@
   opacity: 0;
 }
 
-#tooltip .sockets.hasTraits {
-  padding: 0 0 16px;
+#tooltip .stats .stat .value .tip {
+  height: 100%;
+  background-color: #c6ab3c;
+}
+
+#tooltip .sockets {
+  display: none;
+}
+
+#tooltip .sockets.has-sockets {
+  display: block;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0 0 12px;
 }
 
 #tooltip .plug {
@@ -308,15 +353,14 @@
 #tooltip .description pre {
   padding: 16px 16px 12px;
   white-space: pre-wrap;
-  color: rgba(255, 255, 255, 0.8);
   line-height: 1.4;
   font-style: italic;
   font-size: 14px;
   letter-spacing: 0.8px;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.7);
 }
 
-#tooltip .perk .description pre {
+#tooltip .frame.ui .description pre {
   padding: 12px 16px 12px;
   font-style: unset;
   letter-spacing: unset;
@@ -375,12 +419,12 @@
 }
 
 #tooltip .frame.ui .header {
-  background-color: hsla(var(--commonDarker), 0.9);
+  background-color: hsla(0, 0%, 0%, 0.9);
   border-top: 5px solid rgba(214, 214, 214, 0.8);
 }
 
 #tooltip .frame.ui .black {
-  background-color: hsla(var(--commonDark), 0.9);
+  background-color: hsla(0, 0%, 3%, 0.9);
 }
 
 #tooltip .frame .objective {
@@ -436,6 +480,91 @@
   height: 18px;
   margin: 0 10px 0 0;
 }
+
+#tooltip .frame.ui.name-only .header .name {
+  margin: 0;
+}
+
+#tooltip .frame.ui.sandbox-perk .black .perk {
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 32px auto;
+  grid-gap: 16px;
+}
+
+#tooltip .frame.ui.sandbox-perk .black .perk .image.icon {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+#tooltip .frame.ui.sandbox-perk .black .perk .description {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+#tooltip .header::before {
+  content: attr(data-debugtip);
+  position: absolute;
+  top: -22px;
+  right: 0;
+  font-size: 14px;
+}
+
+#tooltip .frame.is-masterworked .header {
+  position: relative;
+}
+
+#tooltip .frame.is-masterworked .image.bg {
+  background-size: cover;
+  background-position: center top;
+}
+
+#tooltip .frame.is-masterworked .image.bg::before,
+#tooltip .frame.is-masterworked .image.bg::after {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  animation: animation-masterwork-header 5s linear infinite;
+}
+
+@keyframes animation-masterwork-header {
+  0% {
+    background-position-x: 200%;
+  }
+  20% {
+    background-position-x: -200%;
+  }
+  100% {
+    background-position-x: -200%;
+  }
+}
+
+#tooltip .frame.is-masterworked .image.bg::before {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+  background-size: 200%;
+  background-repeat: no-repeat;
+  padding-bottom: 1.1%;
+  top: 0;
+}
+
+#tooltip .frame.is-masterworked .image.bg::after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  background-size: 200%;
+  background-repeat: no-repeat;
+  padding-bottom: 16.8%;
+  bottom: 0;
+}
+
+#tooltip .frame.is-masterworked.exotic .image.bg::after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+  background-size: 200%;
+  background-repeat: no-repeat;
+}
+
+
 
 @media screen and (max-width: 600px) {
   #tooltip {

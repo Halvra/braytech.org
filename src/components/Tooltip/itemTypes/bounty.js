@@ -1,8 +1,8 @@
 import React from 'react';
 import cx from 'classnames';
 
-import ObservedImage from '../ObservedImage';
-import ProgressBar from '../ProgressBar';
+import ObservedImage from '../../ObservedImage';
+import ProgressBar from '../../ProgressBar';
 
 const bounty = (manifest, item) => {
   let description = item.displaySource !== '' ? item.displaySource : false;

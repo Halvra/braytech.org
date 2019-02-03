@@ -4085,7 +4085,7 @@ Array [
           <div
             className="description"
           >
-            Lore scanned
+            Data caches decrypted
           </div>
           <div
             className="fraction"
@@ -16358,8 +16358,6 @@ exports[`Checklists matches shallow snapshot 1`] = `
       >
         <a
           className="active"
-          data-index={0}
-          href="/"
           onClick={[Function]}
         >
           <div
@@ -16377,8 +16375,6 @@ exports[`Checklists matches shallow snapshot 1`] = `
       >
         <a
           className="active"
-          data-index={1}
-          href="/"
           onClick={[Function]}
         >
           <div
@@ -16396,8 +16392,6 @@ exports[`Checklists matches shallow snapshot 1`] = `
       >
         <a
           className="active"
-          data-index={2}
-          href="/"
           onClick={[Function]}
         >
           <div
@@ -16414,9 +16408,7 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={3}
-          href="/"
+          className=""
           onClick={[Function]}
         >
           <div
@@ -16433,9 +16425,7 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={4}
-          href="/"
+          className=""
           onClick={[Function]}
         >
           <div
@@ -16452,9 +16442,7 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={5}
-          href="/"
+          className=""
           onClick={[Function]}
         >
           <div
@@ -16471,9 +16459,7 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={6}
-          href="/"
+          className=""
           onClick={[Function]}
         >
           <div
@@ -16490,9 +16476,7 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={7}
-          href="/"
+          className=""
           onClick={[Function]}
         >
           <div
@@ -16509,9 +16493,7 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={8}
-          href="/"
+          className=""
           onClick={[Function]}
         >
           <div
@@ -16528,12 +16510,12 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={9}
-          href="/"
+          className=""
           onClick={[Function]}
         >
-          <div />
+          <div
+            className="destiny-book_ghost_stories"
+          />
           <div
             className="name"
           >
@@ -16545,12 +16527,12 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={10}
-          href="/"
+          className=""
           onClick={[Function]}
         >
-          <div />
+          <div
+            className="destiny-book_awoken_reef"
+          />
           <div
             className="name"
           >
@@ -16562,12 +16544,12 @@ exports[`Checklists matches shallow snapshot 1`] = `
         className="linked"
       >
         <a
-          className="active"
-          data-index={11}
-          href="/"
+          className=""
           onClick={[Function]}
         >
-          <div />
+          <div
+            className="destiny-book_forsaken_prince"
+          />
           <div
             className="name"
           >
@@ -16812,633 +16794,6 @@ exports[`Checklists matches shallow snapshot 1`] = `
           </div>
         </li>
       </ul>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Corrupted Eggs
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Eggs destroyed
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "0%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <ul
-        className="list no-interaction"
-      >
-        <li>
-          <div
-            className="state"
-          />
-          <div
-            className="text"
-          >
-            <p>
-              Egg 40
-            </p>
-            <p>
-              Forfeit Shrine
-            </p>
-          </div>
-          <div
-            className="lowlines"
-          >
-            <a
-              href="https://lowlidev.com.au/destiny/maps/2779202173/1034141726?origin=BRAYTECH"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <i
-                className="uniE1C4"
-              />
-            </a>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Ahamkara Bones
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Bones found
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "0%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <ul
-        className="list no-interaction"
-      >
-        <li>
-          <div
-            className="state"
-          />
-          <div
-            className="text"
-          >
-            <p>
-              Cosmogyre II
-            </p>
-            <p>
-              The Shattered Throne
-            </p>
-          </div>
-          <div
-            className="lowlines"
-          >
-            <a
-              href="https://lowlidev.com.au/destiny/maps/2779202173/1370818864?origin=BRAYTECH"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <i
-                className="uniE1C4"
-              />
-            </a>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Cat Statues
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Feline friends satisfied
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "100%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <ul
-        className="list no-interaction"
-      >
-        <li>
-          <div
-            className="state completed"
-          />
-          <div
-            className="text"
-          >
-            <p>
-              Feline friend 6
-            </p>
-            <p>
-              Harbinger's Seclude
-            </p>
-          </div>
-          <div
-            className="lowlines"
-          >
-            <a
-              href="https://lowlidev.com.au/destiny/maps/2779202173/56362725?origin=BRAYTECH"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <i
-                className="uniE1C4"
-              />
-            </a>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Sleeper Nodes
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Sleeper nodes hacked
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "0%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <ul
-        className="list no-interaction"
-      >
-        <li>
-          <div
-            className="state"
-          />
-          <div
-            className="text"
-          >
-            <p>
-              Futurescape.Dock.Outpost
-            </p>
-            <p>
-              BrayTech Futurescape
-            </p>
-          </div>
-          <div
-            className="lowlines"
-          >
-            <a
-              href="https://lowlidev.com.au/destiny/maps/308080871/135585929?origin=BRAYTECH"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <i
-                className="uniE1C4"
-              />
-            </a>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Ghost Scans
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Ghost scans performed
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "100%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <ul
-        className="list no-interaction"
-      >
-        <li>
-          <div
-            className="state completed"
-          />
-          <div
-            className="text"
-          >
-            <p>
-              Scan 4
-            </p>
-            <p>
-              Giant's Scar, Io
-            </p>
-          </div>
-          <div
-            className="lowlines"
-          >
-            <a
-              href="https://lowlidev.com.au/destiny/maps/2218917881/15952112?origin=BRAYTECH"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <i
-                className="uniE1C4"
-              />
-            </a>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Lost Memory Fragments
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Memories destroyed
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "100%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <ul
-        className="list no-interaction"
-      >
-        <li>
-          <div
-            className="state completed"
-          />
-          <div
-            className="text"
-          >
-            <p>
-              Memory 44
-            </p>
-            <p>
-              BrayTech Futurescape
-            </p>
-          </div>
-          <div
-            className="lowlines"
-          >
-            <a
-              href="https://lowlidev.com.au/destiny/maps/308080871/200500046?origin=BRAYTECH"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <i
-                className="uniE1C4"
-              />
-            </a>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Ghost Stories
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Stories found
-              </div>
-              <div
-                className="fraction"
-              >
-                0
-                /
-                0
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "NaN%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        className="info"
-      >
-        <div
-          className="text"
-        >
-          You've completed this list.
-        </div>
-      </div>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Awoken of the Reef
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Crystals scanned
-              </div>
-              <div
-                className="fraction"
-              >
-                0
-                /
-                0
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "NaN%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        className="info"
-      >
-        <div
-          className="text"
-        >
-          You've completed this list.
-        </div>
-      </div>
-    </div>
-    <div
-      className="col"
-    >
-      <div
-        className="head"
-      >
-        <h4>
-          Forsaken Prince
-        </h4>
-        <div
-          className="binding"
-        >
-          <p>
-            Profile bound
-          </p>
-        </div>
-        <div
-          className="progress-bar chunky"
-        >
-          <div
-            className="bar full"
-          >
-            <div
-              className="text"
-            >
-              <div
-                className="description"
-              >
-                Lore scanned
-              </div>
-              <div
-                className="fraction"
-              >
-                0
-                /
-                0
-              </div>
-            </div>
-            <div
-              className="fill"
-              style={
-                Object {
-                  "width": "NaN%",
-                }
-              }
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        className="info"
-      >
-        <div
-          className="text"
-        >
-          You've completed this list.
-        </div>
-      </div>
     </div>
   </div>
 </div>

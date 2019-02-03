@@ -1,9 +1,6 @@
 import React from 'react';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 import cx from 'classnames';
-import packageJSON from '../../../package.json';
 
 import './styles.css';
 
@@ -75,13 +72,18 @@ class HeaderStandard extends React.Component {
       </div>
     );
 
+    let selectedTheme = this.props.theme.selected;
+    if (this.props.themeOverride) {
+      selectedTheme = this.props.themeOverride;
+    }
+
     return (
-      <div id='header' className={cx('standard', this.props.theme.selected, { navOpen: this.state.mobileNavOpen, isIndex: this.props.isIndex })}>
+      <div id='header' className={cx('standard', selectedTheme, { navOpen: this.state.mobileNavOpen })}>
         <div className='braytech'>
           <div className='logo'>
             <Link to='/'>
               <span className='destiny-clovis_bray_device' />
-              Braytech {packageJSON.version}
+              Braytech
             </Link>
           </div>
           {!viewsInline ? (
@@ -106,14 +108,4 @@ class HeaderStandard extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  return {
-    theme: state.theme
-  };
-}
-
-export default compose(
-  connect(
-    mapStateToProps
-  )
-)(HeaderStandard);
+export default HeaderStandard;

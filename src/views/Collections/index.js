@@ -19,8 +19,8 @@ class Collections extends React.Component {
     this.state = {};
   }
 
-  componentDidUpdate(prevProps) {
-    if (!this.props.match.params.quaternary && prevProps.location.pathname !== this.props.location.pathname) {
+  componentDidMount() {
+    if (!this.props.match.params.quaternary) {
       window.scrollTo(0, 0);
     }
   }
@@ -31,7 +31,7 @@ class Collections extends React.Component {
 
     if (!primaryHash) {
       return (
-        <div className={cx('view', 'presentation-node', this.props.theme.selected)} id='collections'>
+        <div className={cx('view', 'presentation-node', 'root', this.props.theme.selected)} id='collections'>
           <Root {...this.props} />
         </div>
       );

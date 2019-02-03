@@ -1,18 +1,9 @@
 import React from 'react';
 import cx from 'classnames';
+import orderBy from 'lodash/orderBy';
 
 import Globals from './globals';
 import ObservedImage from '../components/ObservedImage';
-
-const round = number => {
-  const floor = Math.floor(number);
-
-  if (number - floor > 0.5) {
-    return Math.ceil(number);
-  } else {
-    return floor;
-  }
-};
 
 const interpolate = (investmentValue, displayInterpolation) => {
   const interpolation = [...displayInterpolation].sort((a, b) => a.value - b.value);
@@ -38,217 +29,299 @@ const interpolate = (investmentValue, displayInterpolation) => {
   const factor = range > 0 ? (investmentValue - lowerBound.value) / 100 : 1;
 
   const displayValue = lowerBound.weight + (upperBound.weight - lowerBound.weight) * factor;
-  return round(displayValue);
+  return Math.round(displayValue);
 };
 
-export const getWeapon = (manifest, hash, socketExclusions = [2285418970], initialOnly = false) => {
-  let item = manifest.DestinyInventoryItemDefinition[hash];
+export const getSockets = (manifest, item, traitsOnly = false, mods = true, initialOnly = false, socketExclusions = []) => {
+  let statGroup = item.stats ? manifest.DestinyStatGroupDefinition[item.stats.statGroupHash] : false;
 
-  let weaponsStats = [
-    {
-      hash: 2837207746,
-      name: manifest.DestinyStatDefinition[2837207746].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 3614673599,
-      name: manifest.DestinyStatDefinition[3614673599].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 2523465841,
-      name: manifest.DestinyStatDefinition[2523465841].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 4043523819,
-      name: manifest.DestinyStatDefinition[4043523819].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 1240592695,
-      name: manifest.DestinyStatDefinition[1240592695].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 2762071195,
-      name: manifest.DestinyStatDefinition[2762071195].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 209426660,
-      name: manifest.DestinyStatDefinition[209426660].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 155624089,
-      name: manifest.DestinyStatDefinition[155624089].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 943549884,
-      name: manifest.DestinyStatDefinition[943549884].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 4188031367,
-      name: manifest.DestinyStatDefinition[4188031367].displayProperties.name,
-      type: 'bar',
-      modifier: 0
-    },
-    {
-      hash: 1345609583,
-      name: manifest.DestinyStatDefinition[1345609583].displayProperties.name,
-      type: 'bar',
-      modifier: 0,
-      hidden: true
-    },
-    {
-      hash: 2715839340,
-      name: manifest.DestinyStatDefinition[2715839340].displayProperties.name,
-      type: 'bar',
-      modifier: 0,
-      hidden: true
-    },
-    {
-      hash: 3555269338,
-      name: manifest.DestinyStatDefinition[3555269338].displayProperties.name,
-      type: 'bar',
-      modifier: 0,
-      hidden: true
-    },
-    {
-      hash: 1931675084,
-      name: manifest.DestinyStatDefinition[1931675084].displayProperties.name,
-      type: 'bar',
-      modifier: 0,
-      hidden: true
-    },
-    {
-      hash: 925767036,
-      name: manifest.DestinyStatDefinition[925767036].displayProperties.name,
-      type: 'int',
-      modifier: 0
-    },
-    {
-      hash: 4284893193,
-      name: manifest.DestinyStatDefinition[4284893193].displayProperties.name,
-      type: 'int',
-      modifier: 0
-    },
-    {
-      hash: 2961396640,
-      name: manifest.DestinyStatDefinition[2961396640].displayProperties.name,
-      type: 'int',
-      modifier: 0
-    },
-    {
-      hash: 3871231066,
-      name: manifest.DestinyStatDefinition[3871231066].displayProperties.name,
-      type: 'int',
-      modifier: 0
-    }
-  ];
-
-  let statGroup = manifest.DestinyStatGroupDefinition[item.stats.statGroupHash];
+  let statModifiers = [];
+  let statModifiersMasterworks = [];
+  let masterworkKillTracker = false;
 
   let socketsOutput = [];
-  Object.keys(item.sockets.socketEntries).forEach(key => {
-    let socket = item.sockets.socketEntries[key];
 
-    if (socketExclusions.includes(socket.singleInitialItemHash) || socket.socketTypeHash === 2218962841) {
-      return;
+  // console.log(item);
+  
+  if (item.sockets) {
+    let socketEntries = item.sockets.socketEntries;
+    if (item.itemComponents && item.itemComponents.sockets) {
+      mods = true;
+      Object.keys(socketEntries).forEach(key => {
+        socketEntries[key].singleInitialItemHash = item.itemComponents.sockets[key].plugHash || 0;
+        socketEntries[key].reusablePlugItems = item.itemComponents.sockets[key].reusablePlugs || [];
+        socketEntries[key].plugObjectives = item.itemComponents.sockets[key].plugObjectives;
+        if (socketEntries[key].reusablePlugItems.length === 0 && socketEntries[key].singleInitialItemHash !== 0) {
+          socketEntries[key].reusablePlugItems.push({
+            plugItemHash: socketEntries[key].singleInitialItemHash
+          });
+        }
+        // sometimes items don't include their initial plug in their plugItems array. this seems to be true for year 1 masterworks
+        if (socketEntries[key].singleInitialItemHash && !socketEntries[key].reusablePlugItems.find(plug => socketEntries[key].singleInitialItemHash === plug.plugItemHash)) {
+          socketEntries[key].reusablePlugItems.push({
+            plugItemHash: socketEntries[key].singleInitialItemHash
+          });
+        }
+      });
     }
 
-    // singleInitialItemHash for stats
-    socket.reusablePlugItems.forEach(reusablePlug => {
-      let plug = manifest.DestinyInventoryItemDefinition[reusablePlug.plugItemHash];
+    // console.log(item.itemComponents.sockets);
 
-      if (plug.hash === socket.singleInitialItemHash) {
-        plug.investmentStats.forEach(modifier => {
-          let index = weaponsStats.findIndex(stat => stat.hash === modifier.statTypeHash);
-          if (index > -1) {
-            weaponsStats[index].modifier = modifier.value;
-          }
-        });
-      }
-    });
+    Object.keys(socketEntries).forEach(key => {
+      let socket = socketEntries[key];
 
-    let socketPlugs = [];
+      let categoryHash = item.sockets.socketCategories.find(category => category.socketIndexes.includes(parseInt(key, 10))) ? item.sockets.socketCategories.find(category => category.socketIndexes.includes(parseInt(key, 10))).socketCategoryHash : false;
 
-    socket.reusablePlugItems.forEach(reusablePlug => {
-      let plug = manifest.DestinyInventoryItemDefinition[reusablePlug.plugItemHash];
+      let modCategoryHash = [3379164649, 590099826, 2685412949, 4243480345, 590099826];
+      // 11855950: exotic mw?
+      // 2218962841: legendary hammerhead mw
+      // 2440389816: legendary mida mini tool vanguard mw
+      // 2440389816: ???
+      // 3013937058: sunshot
+      // 3969713706: tractor cannon
+      // 2071818427: whisper
+      // 3906162408: colony
+      // 2361479437: legendary uriels
+      let masterworkSocketHash = [11855950, 2218962841, 1666149691, 2440389816, 3013937058, 3969713706, 2071818427, 3906162408, 2361479437];
 
-      // if (plug.hash === 3876796314) { // black armoury radiance thing
-      //   return;
-      // }
-
-      if (initialOnly && plug.hash !== socket.singleInitialItemHash) {
+      if (socketExclusions.includes(socket.singleInitialItemHash) || (!mods && modCategoryHash.includes(categoryHash))) {
         return;
       }
 
-      socketPlugs.push({
-        active: plug.hash === socket.singleInitialItemHash,
-        definition: plug,
-        element: (
-          <div key={plug.hash} className={cx('plug', 'tooltip', { 'is-intrinsic': plug.itemCategoryHashes.includes(2237038328), 'is-active': plug.hash === socket.singleInitialItemHash })} data-itemhash={plug.hash}>
-            <ObservedImage className={cx('image', 'icon')} src={`${Globals.url.bungie}${plug.displayProperties.icon}`} />
-            <div className='text'>
-              <div className='name'>{plug.displayProperties.name}</div>
+      socket.reusablePlugItems.forEach(reusablePlug => {
+        let plug = manifest.DestinyInventoryItemDefinition[reusablePlug.plugItemHash];
+        
+        // console.log(reusablePlug, plug, socket);
+
+        if (plug.hash === socket.singleInitialItemHash) {
+          plug.investmentStats.forEach(modifier => {
+            let index = statModifiers.findIndex(stat => stat.statHash === modifier.statTypeHash);
+            if (index > -1) {
+              statModifiers[index].value = statModifiers[index].value + modifier.value;
+            } else {
+              statModifiers.push({
+                statHash: modifier.statTypeHash,
+                value: modifier.value
+              });
+            }
+            
+            if (masterworkSocketHash.includes(socket.socketTypeHash)) {
+
+              // console.log(item, reusablePlug, plug, socket);
+
+              let index = statModifiersMasterworks.findIndex(stat => stat.statHash === modifier.statTypeHash);
+              if (index > -1) {
+                statModifiersMasterworks[index].value = statModifiersMasterworks[index].value + modifier.value;
+              } else {
+                statModifiersMasterworks.push({
+                  statHash: modifier.statTypeHash,
+                  value: modifier.value
+                });
+              }
+
+              const killTracker = socketEntries.find(socket => socket.plugObjectives && socket.plugObjectives.length);
+    
+              // console.log(killTracker, socketEntries);
+            
+              if (
+                killTracker &&
+                killTracker.plugObjectives &&
+                killTracker.plugObjectives.length
+              ) {
+                const plugObjective = killTracker.plugObjectives[0];
+
+                masterworkKillTracker = {
+                  plugHash: plug.hash,
+                  progress: plugObjective,
+                  objectiveDefinition: manifest.DestinyObjectiveDefinition[plugObjective.objectiveHash]
+                }
+              }
+
+            }
+          });
+        }
+      });
+
+      // console.log(masterworkKillTracker)
+
+      let socketPlugs = [];
+
+      socket.reusablePlugItems.forEach(reusablePlug => {
+        let plug = manifest.DestinyInventoryItemDefinition[reusablePlug.plugItemHash];
+        // console.log(plug, traitsOnly)
+        if (traitsOnly && !plug.itemCategoryHashes.includes(3708671066)) {
+          return;
+        }
+        if (initialOnly && plug.hash !== socket.singleInitialItemHash) {
+          return;
+        }
+
+        socketPlugs.push({
+          active: plug.hash === socket.singleInitialItemHash,
+          definition: plug,
+          element: (
+            <div key={plug.hash} className={cx('plug', 'tooltip', { 'is-intrinsic': plug.itemCategoryHashes.includes(2237038328), 'is-active': plug.hash === socket.singleInitialItemHash })} data-itemhash={plug.hash}>
+              <ObservedImage className={cx('image', 'icon')} src={`${Globals.url.bungie}${plug.displayProperties.icon}`} />
+              <div className='text'>
+                <div className='name'>{plug.displayProperties.name}</div>
+                <div className='description'>{plug.itemTypeDisplayName}</div>
+              </div>
             </div>
+          )
+        });
+      });
+
+      let singleInitialItem = false;
+      if (socket.singleInitialItemHash !== 0) {
+        let plug = manifest.DestinyInventoryItemDefinition[socket.singleInitialItemHash];
+        singleInitialItem = {
+          definition: plug,
+          element: (
+            <div key={plug.hash} className={cx('plug', 'tooltip', { 'is-intrinsic': plug.itemCategoryHashes.includes(2237038328), 'is-active': plug.hash === socket.singleInitialItemHash })} data-itemhash={plug.hash}>
+              <ObservedImage className={cx('image', 'icon')} src={`${Globals.url.bungie}${plug.displayProperties.icon}`} />
+              <div className='text'>
+                <div className='name'>{plug.displayProperties.name}</div>
+                <div className='description'>{plug.itemTypeDisplayName}</div>
+              </div>
+            </div>
+          )
+        };
+      }
+
+      if (socket.singleInitialItemHash !== 0 && !socketPlugs.find(plug => plug.definition.hash === socket.singleInitialItemHash)) {
+        socketPlugs.unshift(singleInitialItem);
+      }
+
+      if (!singleInitialItem && socketPlugs.length === 0) {
+        return;
+      }
+
+      if (singleInitialItem && traitsOnly && !singleInitialItem.definition.itemCategoryHashes.includes(3708671066)) {
+        return;
+      }
+
+      socketsOutput.push({
+        categoryHash,
+        socketTypeHash: socket.socketTypeHash,
+        singleInitialItem,
+        plugs: socketPlugs
+      });
+    });
+  }
+
+  let statsOutput = [];
+
+  // console.log(socketsOutput, statModifiersMasterworks)
+  
+  if (item.itemType === 3) {
+    statGroup.scaledStats.forEach(stat => {
+      let statModifier = statModifiers.find(modifier => modifier.statHash === stat.statHash);
+      let statModifierMasterwork = statModifiersMasterworks.find(modifier => modifier.statHash === stat.statHash);
+      let statDef = manifest.DestinyStatDefinition[stat.statHash];
+
+      if (Object.keys(item.stats.stats).includes(stat.statHash.toString())) {
+        let modifier = statModifier ? statModifier.value : 0;
+
+        let instanceStat = item.itemComponents && item.itemComponents.stats ? Object.values(item.itemComponents.stats).find(s => s.statHash === stat.statHash) : false;
+        
+        let investmentStat = item.investmentStats.find(investment => investment.statTypeHash === stat.statHash);
+        let scaledStats = statGroup.scaledStats.find(scale => scale.statHash === stat.statHash);
+
+        let interpolatatedModifier = scaledStats && investmentStat ? interpolate(investmentStat.value + modifier, scaledStats.displayInterpolation) : modifier;
+
+        let value = interpolatatedModifier;
+        if (stat.hash === 3871231066) {
+          value = value < 1 ? 1 : value;
+        }
+
+        value = statModifierMasterwork ? value - statModifierMasterwork.value : value;
+        value = instanceStat ? instanceStat.value : value;
+
+        statsOutput.push({
+          displayAsNumeric: stat.displayAsNumeric,
+          element: (
+            <div key={stat.statHash} className='stat'>
+              <div className='name'>{statDef.displayProperties.name}</div>
+              <div className={cx('value', { bar: !stat.displayAsNumeric, int: stat.displayAsNumeric, masterwork: statModifierMasterwork })}>
+                {!stat.displayAsNumeric ? (
+                  <>
+                    <div className='bar' data-value={value} style={{ width: `${value}%` }} />
+                    {statModifierMasterwork ? <div className='tip' style={{ width: `${statModifierMasterwork.value}%` }} /> : null}
+                  </>
+                ) : (
+                  value
+                )}
+              </div>
+            </div>
+          )
+        });
+      }
+    });
+  }
+  if (item.itemType === 2) {
+    statGroup.scaledStats.forEach(stat => {
+      let statModifier = statModifiers.find(modifier => modifier.statHash === stat.statHash);
+      let statDef = manifest.DestinyStatDefinition[stat.statHash];
+
+      let modifier = statModifier ? statModifier.value : 0;
+
+      let investmentStat = item.investmentStats.find(investment => investment.statTypeHash === stat.statHash);
+      let scaledStats = statGroup.scaledStats.find(scale => scale.statHash === stat.statHash);
+
+      let value = Math.min((investmentStat ? investmentStat.value : 0) + modifier, scaledStats.maximumValue);
+
+      statsOutput.push({
+        element: (
+          <div key={stat.statHash} className='stat'>
+            <div className='name'>{statDef.displayProperties.name}</div>
+            <div className={cx('value', { bar: !stat.displayAsNumeric, int: stat.displayAsNumeric })}>{!stat.displayAsNumeric ? <div className='bar' data-value={value} style={{ width: `${(value / 3) * 100}%` }} /> : value}</div>
           </div>
         )
       });
     });
+  }
 
-    socketsOutput.push({
-      categoryHash: item.sockets.socketCategories.find(category => category.socketIndexes.includes(parseInt(key, 10))) ? item.sockets.socketCategories.find(category => category.socketIndexes.includes(parseInt(key, 10))).socketCategoryHash : false,
-      plugs: socketPlugs
-    });
-  });
+  // push numeric stats to the bottom
+  statsOutput = orderBy(statsOutput, [stat => stat.displayAsNumeric], ['asc']);
 
-  let stats = [];
-
-  weaponsStats.forEach(stat => {
-    if (stat.hidden) {
-      return;
-    }
-    if (Object.keys(item.stats.stats).includes(stat.hash.toString())) {
-      let modifier = stat.modifier ? stat.modifier : 0;
-      if (stat.hash === 3871231066) {
-        modifier = 0;
-      }
-
-      let investmentStat = item.investmentStats.find(investment => investment.statTypeHash === stat.hash);
-      let scaledStats = statGroup.scaledStats.find(scale => scale.statHash === stat.hash);
-
-      let interpolatatedModifier = scaledStats ? interpolate(investmentStat.value + modifier, scaledStats.displayInterpolation) : modifier;
-
-      let value = interpolatatedModifier;
-      if (stat.hash === 3871231066) {
-        value = value < 1 ? 1 : value;
-      }
-
-      stats.push(
-        <div key={stat.hash} className='stat'>
-          <div className='name'>{stat.name}</div>
-          <div className={cx('value', stat.type)}>{stat.type === 'bar' ? <div className='bar' data-value={value} style={{ width: `${value}%` }} /> : value}</div>
-        </div>
-      );
-    }
-  });
+  // push mods to the bottom
+  socketsOutput = orderBy(socketsOutput, [socket => socket.categoryHash], ['desc']);
 
   return {
-    stats,
-    sockets: socketsOutput
+    stats: statsOutput,
+    sockets: socketsOutput,
+    killTracker: masterworkKillTracker || false
   };
+};
+
+export const getOrnaments = (manifest, hash) => {
+  let item = manifest.DestinyInventoryItemDefinition[hash];
+
+  let ornaments = [];
+
+  let defaultOrnamentHash = [1959648454, 2931483505];
+  if (item.sockets) {
+    Object.keys(item.sockets.socketEntries).forEach(key => {
+      if (defaultOrnamentHash.includes(item.sockets.socketEntries[key].singleInitialItemHash)) {
+        item.sockets.socketEntries[key].reusablePlugItems
+          .filter(plug => !defaultOrnamentHash.includes(plug.plugItemHash))
+          .forEach(plug => {
+            let def = manifest.DestinyInventoryItemDefinition[plug.plugItemHash];
+            ornaments.push({
+              element: (
+                <div key={def.hash} className={cx('plug', 'tooltip')} data-itemhash={def.hash}>
+                  <ObservedImage className={cx('image', 'icon')} src={`${Globals.url.bungie}${def.displayProperties.icon}`} />
+                  <div className='text'>
+                    <div className='name'>{def.displayProperties.name}</div>
+                    <div className='description'>Ornament</div>
+                  </div>
+                </div>
+              )
+            });
+          });
+      }
+    });
+  }
+
+  return ornaments;
 };

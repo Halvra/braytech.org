@@ -6,233 +6,91 @@ import cx from 'classnames';
 import { withNamespaces } from 'react-i18next';
 
 import getProfile from '../../utils/getProfile';
-import setProfile from '../../utils/setProfile';
-import Characters from '../../components/Characters';
-import Globals from '../../utils/globals';
-import * as destinyEnums from '../../utils/destinyEnums';
 import * as ls from '../../utils/localStorage';
-import errorHandler from '../../utils/errorHandler';
 import Spinner from '../../components/Spinner';
+import ProfileError from './ProfileError';
+
+import ProfileSearch from './ProfileSearch';
+import Profile from './Profile';
 
 import './styles.css';
+import store from '../../utils/reduxStore';
 
 class CharacterSelect extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      search: {
-        results: false
-      },
-      profile: {
-        data: false
-      },
-      error: false,
-      loading: true
-    };
-  }
-
-  searchDestinyPlayer = e => {
-    let membershipType = '-1';
-    let displayName = e.target.value;
-
-    clearTimeout(this.inputTimeout);
-    this.inputTimeout = setTimeout(() => {
-      fetch(`https://www.bungie.net/Platform/Destiny2/SearchDestinyPlayer/${membershipType}/${encodeURIComponent(displayName)}/`, {
-        headers: {
-          'X-API-Key': Globals.key.bungie
-        }
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(SearchResponse => {
-          if (SearchResponse.ErrorCode !== 1) {
-            console.log(SearchResponse);
-            this.setState({ error: SearchResponse.ErrorCode });
-            return;
-          }
-          this.setState({
-            search: {
-              results: SearchResponse.Response
-            },
-            error: false
-          });
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    }, 1000);
-  };
-
-  characterClick = characterId => {
-
-    let membershipType = this.state.profile.data.profile.profile.data.userInfo.membershipType;
-    let membershipId = this.state.profile.data.profile.profile.data.userInfo.membershipId;
-    let data = this.state.profile.data;
-    let setAsDefaultProfile = true;
-
-    setProfile(membershipType, membershipId, characterId, data, setAsDefaultProfile);
-  };
-
-  getProfileCallback = state => {
-    this.setState(prev => ({
-      search: { ...prev.search },
-      profile: {
-        data: state.data
-      },
-      error: state.error,
-      loading: state.loading
-    }));
-  };
-
-  resultClick = (membershipType, membershipId, displayName) => {
-    window.scrollTo(0, 0);
-
-    getProfile(membershipType, membershipId, false, this.getProfileCallback);
-
-    if (displayName) {
-      ls.update('history.profiles', { membershipType: membershipType, membershipId: membershipId, displayName: displayName }, true, 6);
-    }
-  };
-
   componentDidMount() {
     window.scrollTo(0, 0);
-
-    if (this.props.user.data) {
-      this.setState({ profile: { data: this.props.user.data }, loading: false });
-    } else if (this.props.user.membershipId && !this.state.profile.data) {
-      getProfile(this.props.user.membershipType, this.props.user.membershipId, this.props.user.characterId, this.getProfileCallback);
-    } else {
-      this.setState({ loading: false });
-    }
   }
 
-  render() {
-    const { t } = this.props;
-    let profileHistory = ls.get('history.profiles') ? ls.get('history.profiles') : [];
-    let resultsElement = null;
-    let profileElement = null;
+  characterClick = characterId => {
+    ls.set('setting.profile', {
+      membershipType: this.props.profile.membershipType,
+      membershipId: this.props.profile.membershipId,
+      characterId
+    });
 
-    if (this.state.search.results) {
-      resultsElement = (
-        <div className='results'>
-          <ul className='list'>
-            {this.state.search.results.length > 0 ? (
-              this.state.search.results.map(result => (
-                <li className='linked' key={result.membershipId}>
-                  <a
-                    onClick={e => {
-                      this.resultClick(result.membershipType, result.membershipId, result.displayName);
-                    }}
-                  >
-                    <span className={`destiny-platform_${destinyEnums.PLATFORMS[result.membershipType].toLowerCase()}`} />
-                    {result.displayName}
-                  </a>
-                </li>
-              ))
-            ) : (
-              <li className='no-profiles'>{t('No profiles found')}</li>
-            )}
-          </ul>
-        </div>
-      );
-    } else {
-      resultsElement = <div className='results' />;
-    }
+    store.dispatch({
+      type: 'PROFILE_CHARACTER_SELECT',
+      payload: characterId
+    });
+  };
 
-    const { from } = this.props.location.state || { from: { pathname: '/' } };
+  profileClick = async (membershipType, membershipId, displayName) => {
+    window.scrollTo(0, 0);
 
-    if (this.state.profile.data) {
-      let clan = null;
-      if (this.state.profile.data.groups.results.length === 1) {
-        clan = <div className='clan'>{this.state.profile.data.groups.results[0].group.name}</div>;
+    store.dispatch({ type: 'PROFILE_LOADING_NEW_MEMBERSHIP', payload: { membershipType, membershipId } });
+
+    try {
+      const data = await getProfile(membershipType, membershipId);
+
+      if (!data.profile.characterProgressions.data) {
+        store.dispatch({ type: 'PROFILE_LOAD_ERROR', payload: new Error('private') });
+        return;
       }
 
-      let timePlayed = (
-        <div className='timePlayed'>
-          {Math.floor(
-            Object.keys(this.state.profile.data.profile.characters.data).reduce((sum, key) => {
-              return sum + parseInt(this.state.profile.data.profile.characters.data[key].minutesPlayedTotal);
-            }, 0) / 1440
-          )}{' '}
-          {t('days on the grind')}
-        </div>
-      );
+      store.dispatch({ type: 'PROFILE_LOADED', payload: data });
+    } catch (error) {
+      store.dispatch({ type: 'PROFILE_LOAD_ERROR', payload: error });
+      return;
+    }
 
-      profileElement = (
-        <>
-          <div className='user'>
-            <div className='info'>
-              <div className='displayName'>{this.state.profile.data.profile.profile.data.userInfo.displayName}</div>
-              {clan}
-              {timePlayed}
-            </div>
-            <Characters data={this.state.profile.data} manifest={this.props.manifest} location={{ ...from }} characterClick={this.characterClick} />
-          </div>
-        </>
+    if (displayName) {
+      ls.update(
+        'history.profiles',
+        {
+          membershipType,
+          membershipId,
+          displayName
+        },
+        true,
+        6
       );
     }
+  };
 
-    let reverse = false;
-    if (this.props.viewport.width <= 500) {
-      reverse = true;
-    }
+  render() {
+    const { profile, theme, viewport, manifest } = this.props;
+    const { error, loading } = profile;
 
-    let errorNotices = null;
-    if (this.state.error) {
-      errorNotices = errorHandler(this.state.error);
-    }
+    const { from } = this.props.location.state || { from: { pathname: '/' } };
+    const reverse = viewport.width <= 500;
+
+    const profileCharacterSelect = (
+      <div className='profile'>
+        {loading && <Spinner />}
+        {profile.data && <Profile profile={profile} manifest={manifest} onCharacterClick={this.characterClick} from={from} />}
+      </div>
+    );
 
     return (
-      <div className={cx('view', this.props.theme.selected, { loading: this.state.loading })} id='get-profile'>
-        {reverse ? (
-          <div className='profile'>
-            {this.state.loading ? <Spinner /> : null}
-            {profileElement}
-          </div>
-        ) : null}
+      <div className={cx('view', theme.selected, { loading })} id='get-profile'>
+        {reverse && profileCharacterSelect}
+
         <div className='search'>
-          {errorNotices}
-          <div className='sub-header sub'>
-            <div>{t('Search for player')}</div>
-          </div>
-          <div className='form'>
-            <div className='field'>
-              <input onInput={this.searchDestinyPlayer} type='text' placeholder={t('insert gamertag')} spellCheck='false' />
-            </div>
-          </div>
-          <div className='results'>{resultsElement}</div>
-          {profileHistory.length > 0 ? (
-            <>
-              <div className='sub-header sub'>
-                <div>{t('Previous')}</div>
-              </div>
-              <div className='results'>
-                <ul className='list'>
-                  {profileHistory.map(result => (
-                    <li className='linked' key={result.membershipId}>
-                      <a
-                        onClick={e => {
-                          this.resultClick(result.membershipType, result.membershipId, result.displayName);
-                        }}
-                      >
-                        <span className={`destiny-platform_${destinyEnums.PLATFORMS[result.membershipType].toLowerCase()}`} />
-                        {result.displayName}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </>
-          ) : null}
+          {error && <ProfileError error={error} />}
+          <ProfileSearch onProfileClick={this.profileClick} />
         </div>
-        {!reverse ? (
-          <div className='profile'>
-            {this.state.loading ? <Spinner /> : null}
-            {profileElement}
-          </div>
-        ) : null}
+
+        {!reverse && profileCharacterSelect}
       </div>
     );
   }
@@ -246,8 +104,6 @@ function mapStateToProps(state, ownProps) {
 }
 
 export default compose(
-  connect(
-    mapStateToProps
-  ),
+  connect(mapStateToProps),
   withNamespaces()
 )(CharacterSelect);

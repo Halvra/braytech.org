@@ -1,8 +1,11 @@
 import * as ls from '../../localStorage';
 
-const defaultState = ls.get('setting.collectibleDisplayState') ? ls.get('setting.collectibleDisplayState') : {
+const savedState = ls.get('setting.collectibleDisplayState') ? ls.get('setting.collectibleDisplayState') : {};
+const defaultState = {
   hideTriumphRecords: false,
-  hideChecklistItems: false
+  hideChecklistItems: false,
+  hideInvisibleCollectibles: true,
+  ...savedState
 };
 
 export default function collectiblesReducer(state = defaultState, action) {

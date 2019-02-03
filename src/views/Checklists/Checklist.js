@@ -5,30 +5,32 @@ import { withNamespaces } from 'react-i18next';
 import ProgressBar from '../../components/ProgressBar';
 
 const Checklist = props => {
+  const { t, name, binding, totalItems, progressDescription, completedItems, children } = props;
+
   return (
     <>
       <div className='head'>
-        <h4>{props.name}</h4>
+        <h4>{name}</h4>
         <div className='binding'>
-          <p>{props.binding}</p>
+          <p>{binding}</p>
         </div>
         <ProgressBar
           objectiveDefinition={{
-            progressDescription: props.progressDescription,
-            completionValue: props.totalItems
+            progressDescription,
+            completionValue: totalItems
           }}
           playerProgress={{
-            progress: props.completedItems
+            progress: completedItems
           }}
           hideCheck
           chunky
         />
       </div>
-      {props.children.length > 0 ? (
-        <ul className='list no-interaction'>{props.children}</ul>
+      {children.length > 0 ? (
+        <ul className='list no-interaction'>{children}</ul>
       ) : (
         <div className='info'>
-          <div className='text'>{props.t("You've completed this list.")}</div>
+          <div className='text'>{t("You've completed this list.")}</div>
         </div>
       )}
     </>
