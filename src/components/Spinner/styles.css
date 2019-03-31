@@ -7,6 +7,11 @@
   pointer-events: none;
 }
 
+.spinner.mini {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .spinner svg {
   position: absolute;
   top: 0;
@@ -17,10 +22,6 @@
 
 .wrapper .spinner svg polygon {
   fill: #fff;
-}
-
-.wrapper.light-mode:not(.profile-route) .spinner svg polygon {
-  fill: #000;
 }
 
 .spinner svg .a {

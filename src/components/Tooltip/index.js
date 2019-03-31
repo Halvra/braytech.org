@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import './styles.css';
-import itemTypes from './itemTypes';
+import ItemTypes from './itemTypes';
 
 class Tooltip extends React.Component {
   constructor(props) {
@@ -12,7 +12,8 @@ class Tooltip extends React.Component {
       hash: false,
       itemInstanceId: false,
       itemState: false,
-      table: false
+      table: false,
+      tooltipType: false
     };
 
     this.tooltip = React.createRef();
@@ -60,7 +61,8 @@ class Tooltip extends React.Component {
         hash: e.currentTarget.dataset.itemhash,
         itemInstanceId: e.currentTarget.dataset.iteminstanceid,
         itemState: e.currentTarget.dataset.itemstate,
-        table: e.currentTarget.dataset.table ? e.currentTarget.dataset.table : false
+        table: e.currentTarget.dataset.table ? e.currentTarget.dataset.table : false,
+        tooltipType: e.currentTarget.dataset.tooltiptype && e.currentTarget.dataset.tooltiptype !== '' ? e.currentTarget.dataset.tooltiptype : false
       });
     }
   };
@@ -70,7 +72,8 @@ class Tooltip extends React.Component {
       hash: false,
       itemInstanceId: false,
       itemState: false,
-      table: false
+      table: false,
+      tooltipType: false
     });
   };
 
@@ -89,7 +92,8 @@ class Tooltip extends React.Component {
           hash: e.currentTarget.dataset.itemhash,
           itemInstanceId: e.currentTarget.dataset.iteminstanceid,
           itemState: e.currentTarget.dataset.itemstate,
-          table: e.currentTarget.dataset.table ? e.currentTarget.dataset.table : false
+          table: e.currentTarget.dataset.table ? e.currentTarget.dataset.table : false,
+          tooltipType: e.currentTarget.dataset.tooltiptype && e.currentTarget.dataset.tooltiptype !== '' ? e.currentTarget.dataset.tooltiptype : false
         });
       }
     }
@@ -121,7 +125,8 @@ class Tooltip extends React.Component {
         hash: false,
         itemInstanceId: false,
         itemState: false,
-        table: false
+        table: false,
+        tooltipType: false
       });
     }
   };
@@ -138,12 +143,13 @@ class Tooltip extends React.Component {
         hash: false,
         itemInstanceId: false,
         itemState: false,
-        table: false
+        table: false,
+        tooltipType: false
       });
       this.target_bindings();
     }
 
-    if (this.props.vendors !== prevProps.vendors || this.props.profile.data !== prevProps.profile.data) {
+    if (this.props.member.data !== prevProps.member.data) {
       this.target_bindings();
     }
 
@@ -163,13 +169,10 @@ class Tooltip extends React.Component {
   }
 
   render() {
-    const { manifest, profile } = this.props;
     if (this.state.hash) {
-      let render = itemTypes(profile, manifest, { hash: this.state.hash, itemInstanceId: this.state.itemInstanceId, itemState: this.state.itemState, table: this.state.table });
-
       return (
         <div id='tooltip' ref={this.tooltip} style={{ top: `${this.mouseMoveXY.y}px`, left: `${this.mouseMoveXY.x}px` }}>
-          {render}
+          <ItemTypes hash={this.state.hash} itemInstanceId={this.state.itemInstanceId} itemState={this.state.itemState} table={this.state.table} tooltipType={this.state.tooltipType} />
         </div>
       );
     } else {
@@ -180,8 +183,7 @@ class Tooltip extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
-    vendors: state.vendors
+    member: state.member
   };
 }
 

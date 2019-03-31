@@ -7,20 +7,17 @@ import { withNamespaces } from 'react-i18next';
 
 import ObservedImage from '../../components/ObservedImage';
 import * as utils from '../../utils/destinyUtils';
+import { removeMemberIds } from '../../utils/paths';
 
 import './styles.css';
 
 class Characters extends React.Component {
-  constructor(props) {
-    super(props);
-    this.manifest = props.manifest;
-    this.state = {};
-  }
-
   render() {
-    const { t } = this.props;
-    let characters = this.props.data.profile.characters.data;
-    let characterProgressions = this.props.data.profile.characterProgressions.data;
+    const { t, member } = this.props;
+    let characters = member.data.profile.characters.data;
+    let characterProgressions = member.data.profile.characterProgressions.data;
+
+    // console.log(`Characters component: `, this.props);
 
     let charactersRender = [];
 
@@ -28,6 +25,8 @@ class Characters extends React.Component {
       let capped = characterProgressions[character.characterId].progressions[1716568313].level === characterProgressions[character.characterId].progressions[1716568313].levelCap ? true : false;
 
       let progress = capped ? characterProgressions[character.characterId].progressions[2030054750].progressToNextLevel / characterProgressions[character.characterId].progressions[2030054750].nextLevelAt : characterProgressions[character.characterId].progressions[1716568313].progressToNextLevel / characterProgressions[character.characterId].progressions[1716568313].nextLevelAt;
+
+      let profileLink = `/${member.membershipType}/${member.membershipId}/${character.characterId}${removeMemberIds(this.props.location.pathname)}`;
 
       charactersRender.push(
         <li key={character.characterId} className='linked'>
@@ -37,8 +36,8 @@ class Characters extends React.Component {
             })}
             src={`https://www.bungie.net${character.emblemBackgroundPath ? character.emblemBackgroundPath : `/img/misc/missing_icon_d2.png`}`}
           />
-          <div className='class'>{utils.classHashToString(character.classHash, this.manifest, character.genderType)}</div>
-          <div className='species'>{utils.raceHashToString(character.raceHash, this.manifest, character.genderType)}</div>
+          <div className='class'>{utils.classHashToString(character.classHash, character.genderType)}</div>
+          <div className='species'>{utils.raceHashToString(character.raceHash, character.genderType)}</div>
           <div className='light'>{character.light}</div>
           <div className='level'>
             {t('Level')} {character.baseCharacterLevel}
@@ -54,7 +53,7 @@ class Characters extends React.Component {
             />
           </div>
           <Link
-            to={this.props.location.pathname !== '/' ? this.props.location.pathname : '/account'}
+            to={profileLink}
             onClick={e => {
               this.props.characterClick(character.characterId);
             }}
@@ -73,13 +72,12 @@ class Characters extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
+    member: state.member,
     theme: state.theme
   };
 }
 
 export default compose(
-  connect(
-    mapStateToProps
-  ),
+  connect(mapStateToProps),
   withNamespaces()
 )(Characters);

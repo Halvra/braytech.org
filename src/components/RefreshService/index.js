@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import getProfile from '../../utils/getProfile';
+import getMember from '../../utils/getMember';
 import store from '../../utils/reduxStore';
 
 const AUTO_REFRESH_INTERVAL = 30 * 1000;
@@ -15,7 +15,7 @@ class RefreshService extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.profile.data !== this.props.profile.data || prevProps.refreshService.config.enabled !== this.props.refreshService.config.enabled) {
+    if (prevProps.member.data !== this.props.member.data || prevProps.refreshService.config.enabled !== this.props.refreshService.config.enabled) {
       if (prevProps.refreshService.config.enabled !== this.props.refreshService.config.enabled) {
         if (this.props.refreshService.config.enabled) {
           this.init();
@@ -88,12 +88,13 @@ class RefreshService extends React.Component {
       return;
     }
 
-    const profile = this.props.profile;
+    const member = this.props.member;
+    const { membershipType, membershipId, characterId } = member;
     try {
-      const data = await getProfile(profile.membershipType, profile.membershipId);
+      const data = await getMember(membershipType, membershipId);
       store.dispatch({
-        type: 'PROFILE_LOADED',
-        payload: data
+        type: 'MEMBER_LOADED',
+        payload: { membershipType, membershipId, characterId, data }
       });
     } catch (error) {
       console.warn(`Error while refreshing profile, ignoring: ${error}`);
@@ -103,7 +104,7 @@ class RefreshService extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     refreshService: state.refreshService
   };
 }

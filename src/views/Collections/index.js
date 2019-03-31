@@ -7,7 +7,7 @@ import cx from 'classnames';
 
 import Root from './Root';
 import BadgeNode from './BadgeNode';
-import Inspect from './Inspect';
+import { ProfileLink } from '../../components/ProfileLink';
 import PresentationNode from './PresentationNode';
 
 import './styles.css';
@@ -29,6 +29,8 @@ class Collections extends React.Component {
     const { t } = this.props;
     let primaryHash = this.props.match.params.primary ? this.props.match.params.primary : false;
 
+    let backLinkPath = this.props.location.state && this.props.location.state.from ? this.props.location.state.from : '/collections';
+
     if (!primaryHash) {
       return (
         <div className={cx('view', 'presentation-node', 'root', this.props.theme.selected)} id='collections'>
@@ -45,20 +47,12 @@ class Collections extends React.Component {
             <div />
             <ul>
               <li>
-                <Link to='/collections'>
+                <ProfileLink to={backLinkPath}>
                   <i className='uniF094' />
                   Back
-                </Link>
+                </ProfileLink>
               </li>
             </ul>
-          </div>
-        </>
-      );
-    } else if (primaryHash === 'inspect') {
-      return (
-        <>
-          <div className='view' id='inspect'>
-            <Inspect {...this.props} />
           </div>
         </>
       );
@@ -72,10 +66,10 @@ class Collections extends React.Component {
             <div />
             <ul>
               <li>
-                <Link to='/collections'>
+                <ProfileLink to={backLinkPath}>
                   <i className='uniF094' />
                   {t('Back')}
-                </Link>
+                </ProfileLink>
               </li>
             </ul>
           </div>
@@ -87,7 +81,7 @@ class Collections extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     theme: state.theme
   };
 }

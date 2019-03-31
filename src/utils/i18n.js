@@ -25,9 +25,11 @@ i18n
     fallbackLng: _defaultLanguage,
 
     backend: {
-      loadPath: '/static/locales/{{lng}}/{{ns}}.json',
+      loadPath: '/static/locales/{{lng}}/{{ns}}.json'
     },
 
+    // allow keys to be phrases having `:`, `.`
+    nsSeparator: false,
     keySeparator: false,
 
     interpolation: {

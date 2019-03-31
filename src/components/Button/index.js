@@ -37,8 +37,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default compose(
-  connect(
-    mapStateToProps
-  )
-)(Button);
+export default compose(connect(mapStateToProps))(Button);

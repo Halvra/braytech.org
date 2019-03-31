@@ -47,7 +47,6 @@ class ClanBannerBuilder extends React.Component {
   };
 
   componentDidMount() {
-    
     window.scrollTo(0, 0);
 
     this.clanBannerManifestFetch().then(clanBannerManifest => {
@@ -59,9 +58,7 @@ class ClanBannerBuilder extends React.Component {
     });
   }
 
-  componentWillUnmount() {
-    
-  }
+  componentWillUnmount() {}
 
   render() {
     const { t } = this.props;
@@ -252,11 +249,9 @@ class ClanBannerBuilder extends React.Component {
           <ClanBanner bannerData={bannerData} dark />
         </div>
         <div className='options'>
-          <div className='header'>
+          <div className='page-header'>
             <div className='name'>{t('Clan Banner Builder')}</div>
-            <div className='description'>
-              <p>{t("Collaborate with clan members on a new clan banner. Selecting different options instantly updates the page's URL, which allows you to easily share your customisations.")}</p>
-            </div>
+            <div className='description'>{t("Collaborate with clan members on a new clan banner. Selecting different options instantly updates the page's URL, which allows you to easily share your customisations.")}</div>
           </div>
           <div className='config'>{this.state.clanBannerManifest ? configOptions : <Spinner dark />}</div>
         </div>

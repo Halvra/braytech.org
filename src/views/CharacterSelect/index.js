@@ -1,11 +1,10 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 import { withNamespaces } from 'react-i18next';
 
-import getProfile from '../../utils/getProfile';
+import store from '../../utils/reduxStore';
 import * as ls from '../../utils/localStorage';
 import Spinner from '../../components/Spinner';
 import ProfileError from './ProfileError';
@@ -14,7 +13,6 @@ import ProfileSearch from './ProfileSearch';
 import Profile from './Profile';
 
 import './styles.css';
-import store from '../../utils/reduxStore';
 
 class CharacterSelect extends React.Component {
   componentDidMount() {
@@ -22,54 +20,24 @@ class CharacterSelect extends React.Component {
   }
 
   characterClick = characterId => {
-    ls.set('setting.profile', {
-      membershipType: this.props.profile.membershipType,
-      membershipId: this.props.profile.membershipId,
-      characterId
-    });
+    const { membershipType, membershipId } = this.props.member;
 
-    store.dispatch({
-      type: 'PROFILE_CHARACTER_SELECT',
-      payload: characterId
-    });
+    ls.set('setting.profile', { membershipType, membershipId, characterId });
   };
 
   profileClick = async (membershipType, membershipId, displayName) => {
     window.scrollTo(0, 0);
 
-    store.dispatch({ type: 'PROFILE_LOADING_NEW_MEMBERSHIP', payload: { membershipType, membershipId } });
-
-    try {
-      const data = await getProfile(membershipType, membershipId);
-
-      if (!data.profile.characterProgressions.data) {
-        store.dispatch({ type: 'PROFILE_LOAD_ERROR', payload: new Error('private') });
-        return;
-      }
-
-      store.dispatch({ type: 'PROFILE_LOADED', payload: data });
-    } catch (error) {
-      store.dispatch({ type: 'PROFILE_LOAD_ERROR', payload: error });
-      return;
-    }
+    store.dispatch({ type: 'MEMBER_LOAD_MEMBERSHIP', payload: { membershipType, membershipId } });
 
     if (displayName) {
-      ls.update(
-        'history.profiles',
-        {
-          membershipType,
-          membershipId,
-          displayName
-        },
-        true,
-        6
-      );
+      ls.update('history.profiles', { membershipType, membershipId, displayName }, true, 9);
     }
   };
 
   render() {
-    const { profile, theme, viewport, manifest } = this.props;
-    const { error, loading } = profile;
+    const { member, theme, viewport } = this.props;
+    const { error, loading } = member;
 
     const { from } = this.props.location.state || { from: { pathname: '/' } };
     const reverse = viewport.width <= 500;
@@ -77,7 +45,7 @@ class CharacterSelect extends React.Component {
     const profileCharacterSelect = (
       <div className='profile'>
         {loading && <Spinner />}
-        {profile.data && <Profile profile={profile} manifest={manifest} onCharacterClick={this.characterClick} from={from} />}
+        {member.data && <Profile member={member} onCharacterClick={this.characterClick} from={from} />}
       </div>
     );
 
@@ -98,8 +66,9 @@ class CharacterSelect extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
-    theme: state.theme
+    member: state.member,
+    theme: state.theme,
+    viewport: state.viewport
   };
 }
 

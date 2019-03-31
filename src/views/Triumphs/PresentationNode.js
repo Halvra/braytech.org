@@ -4,23 +4,18 @@ import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 
+import manifest from '../../utils/manifest';
+import { ProfileLink, ProfileNavLink } from '../../components/ProfileLink';
 import ObservedImage from '../../components/ObservedImage';
 import Records from '../../components/Records';
+import { enumerateRecordState } from '../../utils/destinyEnums';
 
 class PresentationNode extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      
-    };
-
-  }
-
   render() {
-    const manifest = this.props.manifest;
-    
-    let primaryHash = this.props.primaryHash;
+    const { member, primaryHash } = this.props;
+    const characterId = member.characterId;
+    const characterRecords = member.data.profile.characterRecords.data;
+    const profileRecords = member.data.profile.profileRecords.data.records;
 
     let primaryDefinition = manifest.DestinyPresentationNodeDefinition[primaryHash];
 
@@ -48,9 +43,9 @@ class PresentationNode extends React.Component {
 
       primaryChildren.push(
         <li key={node.hash} className='linked'>
-          <NavLink isActive={isActive} to={`/triumphs/${primaryHash}/${node.hash}`}>
+          <ProfileNavLink isActive={isActive} to={`/triumphs/${primaryHash}/${node.hash}`}>
             <ObservedImage className={cx('image', 'icon')} src={`https://www.bungie.net${node.displayProperties.icon}`} />
-          </NavLink>
+          </ProfileNavLink>
         </li>
       );
     });
@@ -62,6 +57,16 @@ class PresentationNode extends React.Component {
       if (node.redacted) {
         return;
       }
+
+      let states = [];
+
+      node.children.records.forEach(r => {
+        const recordDefinition = manifest.DestinyRecordDefinition[r.recordHash];
+        const recordScope = recordDefinition.scope || 0;
+        const recordData = recordScope === 1 ? characterRecords[characterId].records[recordDefinition.hash] : profileRecords[recordDefinition.hash];
+
+        states.push(recordData)
+      });
 
       let isActive = (match, location) => {
         if (this.props.match.params.tertiary === undefined && secondaryDefinition.children.presentationNodes.indexOf(child) === 0) {
@@ -75,22 +80,23 @@ class PresentationNode extends React.Component {
 
       secondaryChildren.push(
         <li key={node.hash} className='linked'>
-          <NavLink isActive={isActive} to={`/triumphs/${primaryHash}/${secondaryHash}/${node.hash}`}>
-            {node.displayProperties.name.length > 24 ? node.displayProperties.name.slice(0, 24) + '...' : node.displayProperties.name}
-          </NavLink>
+          <ProfileNavLink isActive={isActive} to={`/triumphs/${primaryHash}/${secondaryHash}/${node.hash}`}>
+            <div className='name'>{node.displayProperties.name.length > 24 ? node.displayProperties.name.slice(0, 24) + '...' : node.displayProperties.name}</div>
+            <div className='progress'>{states.filter(record => enumerateRecordState(record.state).recordRedeemed).length}/{states.filter(record => !enumerateRecordState(record.state).invisible).length}</div>
+          </ProfileNavLink>
         </li>
       );
     });
 
     return (
-      <div className="node">
-        <div className="header">
-          <div className="name">
+      <div className='node'>
+        <div className='header'>
+          <div className='name'>
             {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
             {primaryDefinition.displayProperties.name} <span>{primaryDefinition.children.presentationNodes.length !== 1 ? <>// {secondaryDefinition.displayProperties.name}</> : null}</span>
           </div>
         </div>
-        <div className="children">
+        <div className='children'>
           <ul
             className={cx('list', 'primary', {
               'single-primary': primaryDefinition.children.presentationNodes.length === 1
@@ -98,10 +104,10 @@ class PresentationNode extends React.Component {
           >
             {primaryChildren}
           </ul>
-          <ul className="list secondary">{secondaryChildren}</ul>
+          <ul className='list secondary'>{secondaryChildren}</ul>
         </div>
-        <div className="records">
-          <ul className="list tertiary record-items">
+        <div className='records'>
+          <ul className='list tertiary record-items'>
             <Records {...this.props} hashes={tertiaryDefinition.children.records.map(child => child.recordHash)} highlight={quaternaryHash} readLink={primaryHash === '564676571'} />
           </ul>
         </div>
@@ -112,11 +118,9 @@ class PresentationNode extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     theme: state.theme
   };
 }
 
-export default compose(
-  connect(mapStateToProps),
-)(PresentationNode);
+export default compose(connect(mapStateToProps))(PresentationNode);

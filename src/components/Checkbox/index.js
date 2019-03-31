@@ -21,9 +21,7 @@ class Checkbox extends React.Component {
     return (
       <div className={cx('check-box', classNames, { checked: checked, linked: linked }, this.props.theme.selected)}>
         <div className={cx('check', { ed: checked })} />
-        <div className='text'>
-          {text}
-        </div>
+        <div className='text'>{text}</div>
       </div>
     );
   }
@@ -35,8 +33,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default compose(
-  connect(
-    mapStateToProps
-  )
-)(Checkbox);
+export default compose(connect(mapStateToProps))(Checkbox);

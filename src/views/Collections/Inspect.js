@@ -7,12 +7,13 @@ import Globals from '../../utils/globals';
 import ObservedImage from '../../components/ObservedImage';
 
 import { getSockets } from '../../utils/destinyItems';
+import manifest from '../../utils/manifest';
 
 import './Inspect.css';
 
 class Inspect extends React.Component {
   render() {
-    const { t, manifest, profile } = this.props;
+    const { t } = this.props;
 
     console.log(this);
 
@@ -40,7 +41,7 @@ class Inspect extends React.Component {
         tier = 'basic';
     }
 
-    let properties = getSockets(manifest, definition);
+    let properties = getSockets(definition);
     console.log(properties);
 
     let sockets = [];

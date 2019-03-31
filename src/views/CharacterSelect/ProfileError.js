@@ -67,7 +67,7 @@ const ProfileError = props => {
     return <BungieError code={error.errorCode} status={error.errorStatus} message={error.message} />;
   }
 
-  if (error.messsage === 'private') {
+  if (error.message === 'private') {
     return <PrivateProfileError />;
   }
 

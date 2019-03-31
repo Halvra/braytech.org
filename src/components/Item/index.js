@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import cx from 'classnames';
+
+import manifest from '../../utils/manifest';
 
 import ObservedImage from '../../components/ObservedImage';
 import { enumerateCollectibleState, enumerateItemState } from '../../utils/destinyEnums';
@@ -10,7 +11,7 @@ import './styles.css';
 
 class Item extends React.Component {
   render() {
-    const { manifest, data, profile } = this.props;
+    const { data, member } = this.props;
 
     let hash = data.itemHash;
     let itemDefinition = manifest.DestinyInventoryItemDefinition[hash];
@@ -29,12 +30,12 @@ class Item extends React.Component {
     }
 
     let state = 0;
-    if (profile.data && !data.itemInstanceId) {
+    if (member.data && !data.itemInstanceId) {
       let hash = itemDefinition.collectibleHash ? itemDefinition.collectibleHash : false;
       if (hash) {
-        let characterId = profile.characterId;
-        let characterCollectibles = profile.data.profile.characterCollectibles.data;
-        let profileCollectibles = profile.data.profile.profileCollectibles.data;
+        let characterId = member.characterId;
+        let characterCollectibles = member.data.profile.characterCollectibles.data;
+        let profileCollectibles = member.data.profile.profileCollectibles.data;
 
         let scope = profileCollectibles.collectibles[hash] ? profileCollectibles.collectibles[hash] : characterCollectibles[characterId].collectibles[hash];
         if (scope) {
@@ -49,7 +50,7 @@ class Item extends React.Component {
           <ul className='list'>
             <li
               className={cx('item', 'tooltip', {
-                'not-acquired': profile.data && enumerateCollectibleState(state).notAcquired,
+                'not-acquired': member.data && enumerateCollectibleState(state).notAcquired,
                 'is-masterworked': enumerateItemState(data.itemState).masterworked
               })}
               data-itemhash={itemDefinition.hash}
@@ -69,7 +70,7 @@ class Item extends React.Component {
           <ul className='list'>
             <li
               className={cx('item', 'tooltip', {
-                'not-acquired': profile.data && enumerateCollectibleState(state).notAcquired,
+                'not-acquired': member.data && enumerateCollectibleState(state).notAcquired,
                 'is-masterworked': enumerateItemState(data.itemState).masterworked
               })}
               data-itemhash={itemDefinition.hash}
@@ -89,7 +90,7 @@ class Item extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     theme: state.theme
   };
 }

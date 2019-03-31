@@ -7,6 +7,8 @@ import { Checklists } from './';
 import TestRenderer from 'react-test-renderer';
 import ChecklistFactory from './ChecklistFactory';
 
+import manifest from '../../utils/manifest';
+
 /// SETUP
 function loadManifest() {
   const filename = path.join(__dirname, '__fixtures__/manifest.json');
@@ -35,7 +37,7 @@ jest.mock('react-i18next', () => ({
 
 /// TESTS
 const characterId = 'CHARACTER_ID';
-const manifest = loadManifest();
+manifest.set(loadManifest());
 const data = require(`./__fixtures__/data.json`);
 const dataShallow = require(`./__fixtures__/data.shallow.json`);
 const t = a => a;
@@ -44,7 +46,7 @@ const lists = ['regionChests', 'lostSectors', 'adventures', 'corruptedEggs', 'am
 
 lists.forEach(l => {
   test(`Checklist ${l} matches snapshot`, () => {
-    const f = new ChecklistFactory(t, data.profile, manifest, characterId, false);
+    const f = new ChecklistFactory(t, data.profile, characterId, false);
 
     const checklist = f[l]().checklist;
     const component = TestRenderer.create(<>{checklist}</>).toJSON();
@@ -62,7 +64,6 @@ test(`Checklists matches shallow snapshot`, () => {
     profile: { characterId, data: dataShallow },
     theme: {},
     collectibles: {},
-    manifest,
     t
   };
 

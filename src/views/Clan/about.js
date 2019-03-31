@@ -1,18 +1,15 @@
 import React from 'react';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { NavLink } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import cx from 'classnames';
-import assign from 'lodash/assign';
-import { withNamespaces } from 'react-i18next';
 
-import Globals from '../../utils/globals';
+import * as bungie from '../../utils/bungie';
+import { ProfileNavLink } from '../../components/ProfileLink';
 import ClanBanner from '../../components/ClanBanner';
 import Roster from '../../components/Roster';
 import Spinner from '../../components/Spinner';
 import ProgressBar from '../../components/ProgressBar';
 import Checkbox from '../../components/Checkbox';
+import manifest from '../../utils/manifest';
 
 import './about.css';
 
@@ -21,205 +18,133 @@ class AboutView extends React.Component {
     super(props);
 
     this.state = {
-      membersResponse: false
+      weeklyRewardState: false
     };
-    this.groupFetch = this.groupFetch.bind(this);
   }
 
-  groupFetch = async groupId => {
-    let requests = [
-      {
-        name: 'members',
-        path: `https://www.bungie.net/Platform/GroupV2/${groupId}/Members/`
-      },
-      {
-        name: 'weeklyRewardState',
-        path: `https://www.bungie.net/Platform/Destiny2/Clan/${groupId}/WeeklyRewardState/`
-      }
-    ];
+  async componentDidMount() {
+    const groupId = this.props.group.groupId;
+    const groupWeeklyRewardState = await bungie.groupWeeklyRewardState(groupId);
 
-    let fetches = requests.map(request => {
-      return fetch(request.path, {
-        headers: {
-          'X-API-Key': Globals.key.bungie
-        }
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(fetch => {
-          let object = {};
-          object[request.name] = fetch;
-          return object;
-        });
-    });
-
-    return Promise.all(fetches)
-      .then(promises => {
-        return assign(...promises);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-
-  componentDidMount() {
-    const groups = this.props.profile.data.groups;
-    const clan = groups.results.length > 0 ? groups.results[0].group : false;
-
-    if (clan) {
-      this.groupFetch(clan.groupId).then(response => {
-        this.setState({
-          membersResponse: response.members,
-          weeklyRewardState: response.weeklyRewardState
-        });
-      });
-    }
+    this.setState({ weeklyRewardState: groupWeeklyRewardState });
   }
 
   render() {
-    const manifest = this.props.manifest;
-    const groups = this.props.profile.data.groups;
-    const clan = groups.results.length > 0 ? groups.results[0].group : false;
-    const { t } = this.props;
+    const { t, member, group, groupMembers, theme } = this.props;
+    const characters = member.data.profile.characters.data;
+    const characterIds = characters.map(c => c.characterId);
 
-    if (clan) {
-      const clanLevel = clan.clanInfo.d2ClanProgressions[584850370];
-      const weeklyPersonalContribution = this.props.profile.data.profile.characterProgressions.data[this.props.profile.characterId].progressions[540048094];
+    const weeklyRewardState = this.state.weeklyRewardState;
 
-      const weeklyClanEngramsDefinition = manifest.DestinyMilestoneDefinition[4253138191].rewards[1064137897].rewardEntries;
-      let rewardState = null;
-      if (this.state.weeklyRewardState && this.state.weeklyRewardState.ErrorCode === 1) {
-        rewardState = this.state.weeklyRewardState.Response.rewards.find(reward => reward.rewardCategoryHash === 1064137897).entries;
-      }
+    const clanLevel = group.clanInfo.d2ClanProgressions[584850370];
 
-      return (
-        <div className={cx('view', this.props.theme.selected)} id='clan'>
-          <div className='about'>
-            <div className='banner'>
-              <ClanBanner bannerData={clan.clanInfo.clanBannerData} />
+    let weeklyPersonalContribution = characterIds.reduce((currentValue, characterId) => {
+      let characterProgress = member.data.profile.characterProgressions.data[characterId].progressions[540048094].weeklyProgress || 0;
+      return characterProgress + currentValue;
+    }, 0);
+
+    const weeklyClanEngramsDefinition = manifest.DestinyMilestoneDefinition[4253138191].rewards[1064137897].rewardEntries;
+    let rewardState = null;
+    if (this.state.weeklyRewardState) {
+      rewardState = weeklyRewardState.rewards.find(reward => reward.rewardCategoryHash === 1064137897).entries;
+    }
+
+    return (
+      <div className={cx('view', theme.selected)} id='clan'>
+        <div className='about'>
+          <div className='banner'>
+            <ClanBanner bannerData={group.clanInfo.clanBannerData} />
+          </div>
+          <div className='overview'>
+            <div className='clan-properties'>
+              <div className='name'>
+                {group.name}
+                <div className='tag'>[{group.clanInfo.clanCallsign}]</div>
+              </div>
+              {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
+              <div className='memberCount'>
+                // {group.memberCount} {t('members')} / {groupMembers.responses.filter(member => member.isOnline).length} {t('online')}
+              </div>
+              <div className='motto'>{group.motto}</div>
+              <ReactMarkdown className='bio' escapeHtml disallowedTypes={['image', 'imageReference']} source={group.about} />
             </div>
-            <div className='overview'>
-              <div className='clan-properties'>
-                <div className='name'>
-                  {clan.name}
-                  <div className='tag'>[{clan.clanInfo.clanCallsign}]</div>
-                </div>
-                {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
-                <div className='memberCount'>
-                  // {clan.memberCount} {t('members')}
-                </div>
-                <div className='motto'>{clan.motto}</div>
-                <ReactMarkdown className='bio' escapeHtml disallowedTypes={['image', 'imageReference']} source={clan.about} />
-              </div>
-              <div className='sub-header sub'>
-                <div>{t('Season')} 5</div>
-              </div>
-              <div className='progression'>
-                <div className='clanLevel'>
-                  <div className='text'>{t('Clan level')}</div>
-                  <ProgressBar
-                    objectiveDefinition={{
-                      progressDescription: `${t('Level')} ${clanLevel.level}`,
-                      completionValue: clanLevel.nextLevelAt
-                    }}
-                    playerProgress={{
-                      progress: clanLevel.progressToNextLevel,
-                      objectiveHash: 'clanLevel'
-                    }}
-                    hideCheck
-                    chunky
-                  />
-                </div>
-              </div>
-              <div className='sub-header sub'>
-                <div>{t('Clan details')}</div>
-              </div>
-              <div className='progression details'>
-                <div className='weeklyRewardState'>
-                  <div className='text'>{t('Weekly Clan Engrams')}</div>
-                  <ul>
-                    {rewardState ? (
-                      rewardState.map(reward => (
-                        <li key={reward.rewardEntryHash}>
-                          <Checkbox completed={reward.earned} text={weeklyClanEngramsDefinition[reward.rewardEntryHash].displayProperties.name} />
-                        </li>
-                      ))
-                    ) : (
-                      <Spinner />
-                    )}
-                  </ul>
-                </div>
-                <div className='personalContribution'>
-                  <div className='text'>{t('Weekly Personal XP Contribution')}</div>
-                  <Checkbox
-                    completed={weeklyPersonalContribution.weeklyProgress === 5000}
-                    text={
-                      <>
-                        <span>{weeklyPersonalContribution.weeklyProgress}</span> / 5000
-                      </>
-                    }
-                  />
-                </div>
+            <div className='sub-header sub'>
+              <div>{t('Season')} 6</div>
+            </div>
+            <div className='progression'>
+              <div className='clanLevel'>
+                <div className='text'>{t('Clan level')}</div>
+                <ProgressBar
+                  objectiveDefinition={{
+                    progressDescription: `${t('Level')} ${clanLevel.level}`,
+                    completionValue: clanLevel.nextLevelAt
+                  }}
+                  playerProgress={{
+                    progress: clanLevel.progressToNextLevel,
+                    objectiveHash: 'clanLevel'
+                  }}
+                  hideCheck
+                  chunky
+                />
               </div>
             </div>
-            <div className='roster'>
-              <div className='sub-header sub'>
-                <div>{t('Views')}</div>
-              </div>
-              <div className='views'>
-                <ul className='list'>
-                  <li className='linked'>
-                    <NavLink to='/clan' exact>
-                      {t('About')}
-                    </NavLink>
-                  </li>
-                  <li className='linked'>
-                    <NavLink to='/clan/roster'>{t('Roster')}</NavLink>
-                  </li>
-                  <li className='linked'>
-                    <NavLink to='/clan/stats'>{t('Stats')}</NavLink>
-                  </li>
+            <div className='sub-header sub'>
+              <div>{t('Clan details')}</div>
+            </div>
+            <div className='progression details'>
+              <div className='weeklyRewardState'>
+                <div className='text'>{t('Weekly Clan Engrams')}</div>
+                <ul>
+                  {rewardState ? (
+                    rewardState.map(reward => (
+                      <li key={reward.rewardEntryHash}>
+                        <Checkbox completed={reward.earned} text={weeklyClanEngramsDefinition[reward.rewardEntryHash].displayProperties.name} />
+                      </li>
+                    ))
+                  ) : (
+                    <Spinner />
+                  )}
                 </ul>
               </div>
-              <div className='sub-header sub'>
-                <div>{t('Clan roster')}</div>
-                {this.state.membersResponse ? <div>{this.state.membersResponse.Response.results.filter(member => member.isOnline).length} online</div> : null}
-              </div>
-              {this.state.membersResponse ? <Roster mini linked isOnline members={this.state.membersResponse} manifest={manifest} /> : <Spinner />}
-            </div>
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div className={cx('view', this.props.theme.selected)} id='clan'>
-          <div className='no-clan'>
-            <div className='properties'>
-              <div className='name'>{t('No clan affiliation')}</div>
-              <div className='description'>
-                <p>{t('Clans are optional groups of friends that enhance your online gaming experience. Coordinate with your clanmates to take on co-op challenges or just simply represent them in your solo play to earn extra rewards.')}</p>
-                <p>{t("Join your friend's clan, meet some new friends, or create your own on the companion app or at bungie.net.")}</p>
+              <div className='personalContribution'>
+                <div className='text'>{t('Weekly Personal XP Contribution')}</div>
+                <Checkbox
+                  completed={weeklyPersonalContribution === (characterIds.length * 5000)}
+                  text={
+                    <>
+                      <span>{weeklyPersonalContribution}</span> / {characterIds.length * 5000}
+                    </>
+                  }
+                />
               </div>
             </div>
           </div>
+          <div className='roster'>
+            <div className='sub-header sub'>
+              <div>{t('Views')}</div>
+            </div>
+            <div className='views'>
+              <ul className='list'>
+                <li className='linked'>
+                  <ProfileNavLink to='/clan' exact>
+                    {t('About')}
+                  </ProfileNavLink>
+                </li>
+                <li className='linked'>
+                  <ProfileNavLink to='/clan/roster'>{t('Roster')}</ProfileNavLink>
+                </li>
+              </ul>
+            </div>
+            <div className='sub-header sub'>
+              <div>{t('Clan roster')}</div>
+              <div>{groupMembers.responses.filter(member => member.isOnline).length} online</div>
+            </div>
+            {groupMembers.loading && groupMembers.responses.length === 0 ? <Spinner /> : <Roster mini linked isOnline />}
+          </div>
         </div>
-      );
-    }
+      </div>
+    );
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  console.log(state, ownProps);
-  return {
-    profile: state.profile,
-    theme: state.theme
-  };
-}
-
-export default compose(
-  connect(
-    mapStateToProps
-  ),
-  withNamespaces()
-)(AboutView);
+export default AboutView;

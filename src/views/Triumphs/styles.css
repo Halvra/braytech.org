@@ -232,10 +232,6 @@
   text-transform: uppercase;
 }
 
-#triumphs .node .children {
-  flex-basis: 20%;
-}
-
 #triumphs .node.seal .children .icon {
   position: relative;
   flex-basis: 100%;
@@ -382,10 +378,6 @@
 
   #triumphs.root {
     grid-template-columns: 1fr 1fr;
-  }
-
-  #triumphs .node .children {
-    flex-basis: 30%;
   }
 }
 

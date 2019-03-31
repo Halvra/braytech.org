@@ -15,10 +15,10 @@
   font-size: 14px;
 }
 
-#get-profile .error .sub-header {
+/* #get-profile .error .sub-header {
   border-bottom: 2px solid #F44336;
   color: #F44336;
-}
+} */
 
 #get-profile .search {
   position: relative;
@@ -170,69 +170,11 @@
 
 
 
-#get-profile.dark-mode .results .list li.no-profiles {
+/* #get-profile.dark-mode .results .list li.no-profiles {
   color: rgb(160, 160, 160);
 }
 
 #get-profile.dark-mode .characters-list .list li {
   background-color: rgba(255, 255, 255, 0.1);
-}
+} */
 
-#get-profile.light-mode .form .field input {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-#get-profile.light-mode .form .field::after {
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0);
-}
-
-#get-profile.light-mode .form .field:hover input {
-  background-color: rgba(0, 0, 0, 0.15);
-  color: #222;
-  box-shadow: inset 0 0 0 1px #000;
-}
-
-#get-profile.light-mode .form .field input:focus,
-#get-profile.light-mode .form .field:hover input:focus {
-  color: #222;
-}
-
-#get-profile.light-mode .form .field:hover::after {
-  box-shadow: 0 0 0 2px #000;
-}
-
-#get-profile.light-mode .results .list li.linked {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-#get-profile.light-mode .results .list li.linked a {
-  color: #555;
-}
-
-#get-profile.light-mode .results .list li::before {
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0);
-}
-
-#get-profile.light-mode .results .list li::after {
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0);
-}
-
-#get-profile.light-mode .results .list li.linked:hover {
-  background-color: rgba(0, 0, 0, 0.15);
-}
-
-#get-profile.light-mode .results .list li.linked:hover a {
-  color: #222;
-}
-
-#get-profile.light-mode .results .list li.linked:hover::before {
-  box-shadow: inset 0 0 0 1px #000;
-}
-
-#get-profile.light-mode .results .list li.linked:hover::after {
-  box-shadow: 0 0 0 2px #000;
-}
-
-#get-profile.light-mode .results .list li.no-profiles {
-  color: #555;
-}

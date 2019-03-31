@@ -6,6 +6,7 @@ import React from 'react';
 import Checklist from './Checklist';
 import ChecklistItem from './ChecklistItem';
 import mappings from '../../data/mappings';
+import manifest from '../../utils/manifest';
 
 // For when the mappings generated from lowlines' data don't have a
 // bubbleHash but do have a bubbleId. Inferred by cross-referencing
@@ -39,10 +40,9 @@ const itemOverrides = {
 };
 
 class ChecklistFactoryHelpers {
-  constructor(t, profile, manifest, characterId, hideCompletedItems) {
+  constructor(t, profile, characterId, hideCompletedItems) {
     this.t = t;
     this.profile = profile;
-    this.manifest = manifest;
     this.characterId = characterId;
     this.hideCompletedItems = hideCompletedItems;
   }
@@ -50,7 +50,7 @@ class ChecklistFactoryHelpers {
   checklistItems(checklistId, isCharacterBound) {
     const progressionSource = isCharacterBound ? this.profile.characterProgressions.data[this.characterId] : this.profile.profileProgression.data;
     const progression = progressionSource.checklists[checklistId];
-    const checklist = this.manifest.DestinyChecklistDefinition[checklistId];
+    const checklist = manifest.DestinyChecklistDefinition[checklistId];
 
     return Object.entries(progression).map(([id, completed]) => {
       const item = find(checklist.entries, { hash: parseInt(id) });
@@ -60,8 +60,6 @@ class ChecklistFactoryHelpers {
   }
 
   checklistItem(item, completed) {
-    const manifest = this.manifest;
-
     const mapping = mappings.checklists[item.hash] || {};
 
     const destinationHash = item.destinationHash || mapping.destinationHash;
@@ -103,21 +101,21 @@ class ChecklistFactoryHelpers {
   }
 
   presentationItems(presentationHash, dropFirst = true) {
-    const root = this.manifest.DestinyPresentationNodeDefinition[presentationHash];
+    const root = manifest.DestinyPresentationNodeDefinition[presentationHash];
     let recordHashes = root.children.records.map(r => r.recordHash);
     if (dropFirst) recordHashes = recordHashes.slice(1);
 
     return recordHashes
       .map(hash => {
-        const item = this.manifest.DestinyRecordDefinition[hash];
+        const item = manifest.DestinyRecordDefinition[hash];
         const profileRecord = this.profile.profileRecords.data.records[hash];
         if (!profileRecord) return false;
         const completed = profileRecord.objectives[0].complete;
 
         const mapping = mappings.records[hash];
         const destinationHash = mapping && mapping.destinationHash;
-        const destination = destinationHash && this.manifest.DestinyDestinationDefinition[destinationHash];
-        const place = destination && this.manifest.DestinyPlaceDefinition[destination.placeHash];
+        const destination = destinationHash && manifest.DestinyDestinationDefinition[destinationHash];
+        const place = destination && manifest.DestinyPlaceDefinition[destination.placeHash];
         const bubble = destination && find(destination.bubbles, { hash: mapping.bubbleHash });
 
         // If we don't have a bubble, see if we can infer one from the bubble ID

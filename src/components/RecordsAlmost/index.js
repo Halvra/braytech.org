@@ -1,11 +1,12 @@
 import React from 'react';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import orderBy from 'lodash/orderBy';
 
 import Records from '../Records';
+import { ProfileLink } from '../../components/ProfileLink';
+import manifest from '../../utils/manifest';
 import { enumerateRecordState } from '../../utils/destinyEnums';
 
 class RecordsAlmost extends React.Component {
@@ -16,11 +17,7 @@ class RecordsAlmost extends React.Component {
   }
 
   render() {
-    const manifest = this.props.manifest;
-    const characterId = this.props.profile.characterId;
-
-    const characterRecords = this.props.profile.data.profile.characterRecords.data;
-    const profileRecords = this.props.profile.data.profile.profileRecords.data.records;
+    const profileRecords = this.props.member.data.profile.profileRecords.data.records;
 
     let almost = [];
     let ignores = [];
@@ -39,7 +36,6 @@ class RecordsAlmost extends React.Component {
     });
 
     Object.entries(profileRecords).forEach(([key, record]) => {
-
       if (manifest.DestinyRecordDefinition[key].redacted) {
         return;
       }
@@ -102,30 +98,40 @@ class RecordsAlmost extends React.Component {
         );
       });
 
-      let selfLinkFrom = this.props.selfLinkFrom ? this.props.location.pathname : false;
+      let selfLinkFrom = this.props.selfLinkFrom || false;
+
+      let recordDef = manifest.DestinyRecordDefinition[key] || false;
+      let score = 0;
+
+      if (recordDef && recordDef.completionInfo) {
+        score = recordDef.completionInfo.ScoreValue;
+      }
 
       almost.push({
-        distance: distance,
-        item: <Records key={key} {...this.props} selfLink selfLinkFrom={selfLinkFrom} hashes={[key]} />
+        distance,
+        score,
+        element: <Records key={key} {...this.props} selfLink selfLinkFrom={selfLinkFrom} hashes={[key]} />
       });
     });
 
-    almost = orderBy(almost, [record => record.distance], ['desc']);
+    almost = orderBy(almost, [record => record.distance, record => record.score], ['desc', 'desc']);
+
     almost = this.props.limit ? almost.slice(0, this.props.limit) : almost;
+
     if (this.props.pageLink) {
       almost.push({
-        item: (
+        element: (
           <li key='pageLink' className='linked'>
-            <Link to={{ pathname: '/triumphs/almost-complete', state: { from: '/triumphs' } }}>See next 100</Link>
+            <ProfileLink to={{ pathname: '/triumphs/almost-complete', state: { from: '/triumphs' } }}>See next 100</ProfileLink>
           </li>
         )
-      })
+      });
     }
 
     return (
       <ul className={cx('list record-items almost')}>
-        {almost.map((value, index) => {
-          return value.item;
+        {almost.map(r => {
+          return r.element;
         })}
       </ul>
     );
@@ -134,10 +140,8 @@ class RecordsAlmost extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile
+    member: state.member
   };
 }
 
-export default compose(
-  connect(mapStateToProps)
-)(RecordsAlmost);
+export default connect(mapStateToProps)(RecordsAlmost);

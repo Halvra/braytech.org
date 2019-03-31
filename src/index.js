@@ -24,7 +24,7 @@ class AppEntry extends React.Component {
   };
 
   componentDidMount() {
-    serviceWorker.register(this.config);
+    serviceWorker.unregister(this.config);
   }
 
   render() {

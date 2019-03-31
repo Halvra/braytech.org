@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { withNamespaces } from 'react-i18next';
 import cx from 'classnames';
 
@@ -10,38 +10,38 @@ import './App.css';
 import './components/PresentationNode.css';
 
 import './utils/i18n';
-import { isProfileRoute, themeOverride } from './utils/globals';
 import dexie from './utils/dexie';
 import * as bungie from './utils/bungie';
+import * as voluspa from './utils/voluspa';
 import GoogleAnalytics from './components/GoogleAnalytics';
-import getProfile from './utils/getProfile';
 import store from './utils/reduxStore';
+import manifest from './utils/manifest';
+import * as ls from './utils/localStorage';
 
-import Loading from './components/Loading';
 import Header from './components/Header';
 import Tooltip from './components/Tooltip';
 import Footer from './components/Footer';
-import NotificationApp from './components/NotificationApp';
+import NotificationBar from './components/NotificationBar';
+import NotificationOverlay from './components/NotificationOverlay';
 import NotificationProgress from './components/NotificationProgress';
 import RefreshService from './components/RefreshService';
 
+import ProfileRoutes from './ProfileRoutes';
+
+import Loading from './views/Loading';
 import Index from './views/Index';
 import CharacterSelect from './views/CharacterSelect';
-import Clan from './views/Clan';
-import Collections from './views/Collections';
-import Triumphs from './views/Triumphs';
-import Checklists from './views/Checklists';
-import Account from './views/Account';
-// import Character from './views/Character';
-import ThisWeek from './views/ThisWeek';
-import Vendors from './views/Vendors';
+import Inspect from './views/Inspect';
 import Read from './views/Read';
 import Settings from './views/Settings';
-import Pride from './views/Pride';
 import Credits from './views/Credits';
 import Resources from './views/Resources';
+import Leaderboards from './views/Leaderboards';
+import FAQ from './views/FAQ';
 import ClanBannerBuilder from './views/Resources/ClanBannerBuilder';
-import GodRolls from './views/Resources/GodRolls';
+import OOB from './views/OOB';
+
+const RedirectRoute = props => <Route {...props} render={({ location }) => <Redirect to={{ pathname: '/character-select', state: { from: location } }} />} />;
 
 // Print timings of promises to console (and performance logger)
 // if we're running in development mode.
@@ -62,7 +62,6 @@ class App extends React.Component {
       }
     };
 
-    this.manifest = {};
     this.currentLanguage = props.i18n.getCurrentLanguage();
 
     // We do these as early as possible - we don't want to wait
@@ -77,25 +76,22 @@ class App extends React.Component {
           .first()
       ),
       manifestIndex: timed('getManifestIndex', bungie.manifestIndex()),
-      bungieSettings: timed('getSettings', bungie.settings())
+      bungieSettings: timed('getSettings', bungie.settings()),
+      voluspaStatistics: timed('getStatistics', voluspa.statistics())
     };
 
-    const profile = props.profile;
+    const profile = ls.get('setting.profile');
 
-    if (profile && profile.membershipId && profile.membershipType) {
-      this.startupRequests.profile = timed('getProfile', getProfile(profile.membershipType, profile.membershipId));
-    }
+    store.dispatch({
+      type: 'MEMBER_SET_BY_PROFILE_ROUTE',
+      payload: profile
+    });
   }
 
   updateViewport = () => {
     let width = window.innerWidth;
     let height = window.innerHeight;
-    this.setState({
-      viewport: {
-        width,
-        height
-      }
-    });
+    store.dispatch({ type: 'VIEWPORT_CHANGED', payload: { width, height } });
   };
 
   async componentDidMount() {
@@ -116,32 +112,24 @@ class App extends React.Component {
     const manifestIndex = await this.startupRequests.manifestIndex;
 
     const currentVersion = manifestIndex.jsonWorldContentPaths[this.currentLanguage];
+    let tmpManifest = null;
 
     if (!storedManifest || currentVersion !== storedManifest.version) {
       // Manifest missing from IndexedDB or doesn't match the current version -
       // download a new one and store it.
-      this.manifest = await this.downloadNewManifest(currentVersion);
+      tmpManifest = await this.downloadNewManifest(currentVersion);
     } else {
-      this.manifest = storedManifest.value;
+      tmpManifest = storedManifest.value;
     }
 
-    this.manifest.settings = await this.startupRequests.bungieSettings;
+    tmpManifest.settings = await this.startupRequests.bungieSettings;
     this.availableLanguages = Object.keys(manifestIndex.jsonWorldContentPaths);
 
-    if (this.startupRequests.profile) {
-      try {
-        this.setState({ status: { code: 'fetchProfile' } });
-        const data = await this.startupRequests.profile;
-        store.dispatch({
-          type: 'PROFILE_LOADED',
-          payload: data
-        });
-      } catch (error) {
-        // Ignore it if we can't load the profile on app boot - the user will just
-        // need to select a new profile
-        console.log(error);
-      }
-    }
+    tmpManifest.statistics = {
+      triumphs: await this.startupRequests.voluspaStatistics
+    };
+
+    manifest.set(tmpManifest);
 
     this.setState({ status: { code: 'ready' } });
   }
@@ -154,9 +142,9 @@ class App extends React.Component {
     try {
       await timed('clearTable', dexie.table('manifest').clear());
       await timed('storeManifest', dexie.table('manifest').add({ version: version, value: manifest }));
-    } catch(error) {
+    } catch (error) {
       // Can't write a manifest if we're in private mode in safari
-      console.warn(`Error while trying to store the manifest in indexeddb: ${error}`)
+      console.warn(`Error while trying to store the manifest in indexeddb: ${error}`);
     }
     return manifest;
   }
@@ -171,168 +159,71 @@ class App extends React.Component {
     }
 
     if (this.state.status.code !== 'ready') {
-      return <Loading state={this.state.status} theme={this.props.theme.selected} />;
-    } else {
-      if (this.props.profile.data && this.props.profile.characterId) {
-        return (
-          <Router>
-            <Route
-              render={route => (
-                <div className={cx('wrapper', themeOverride(route.location.pathname) ? themeOverride(route.location.pathname) : this.props.theme.selected, { 'profile-route': isProfileRoute(route.location.pathname, true) })}>
-                  <Route path='/' render={route => <NotificationApp updateAvailable={this.props.updateAvailable} />} />
-                  <Route path='/' render={route => <NotificationProgress manifest={this.manifest} />} />
-                  {/* Don't run the refresh service if we're currently selecting a character, as the refresh will cause the profile to continually reload itself */}
-                  {route.location.pathname !== '/character-select' && <RefreshService {...this.props} />}
-                  <Route path='/' render={route => <Tooltip {...route} manifest={this.manifest} />} />
-                  <GoogleAnalytics.RouteTracker />
-                  <div className='main'>
-                    <Route path='/' render={route => <Header route={route} {...this.state} {...this.props} themeOverride={themeOverride(route.location.pathname)} manifest={this.manifest} />} />
-                    <Switch>
-                      <Route path='/character-select' render={route => <CharacterSelect location={route.location} viewport={this.state.viewport} manifest={this.manifest} />} />
-                      <Route path='/account' exact render={route => <Account manifest={this.manifest} />} />
-                      <Route path='/clan/:view?/:subView?' exact render={route => <Clan manifest={this.manifest} view={route.match.params.view} subView={route.match.params.subView} />} />
-                      {/* <Route path='/character' exact render={() => <Character viewport={this.state.viewport} manifest={this.manifest} />} /> */}
-                      <Route path='/checklists' exact render={() => <Checklists viewport={this.state.viewport} manifest={this.manifest} />} />
-                      <Route path='/collections/:primary?/:secondary?/:tertiary?/:quaternary?' render={route => <Collections {...route} manifest={this.manifest} />} />
-                      <Route path='/triumphs/:primary?/:secondary?/:tertiary?/:quaternary?' render={route => <Triumphs {...route} manifest={this.manifest} />} />
-                      <Route path='/this-week' exact render={() => <ThisWeek manifest={this.manifest} />} />
-                      <Route path='/vendors/:hash?' exact render={route => <Vendors {...route} manifest={this.manifest} />} />
-                      <Route path='/read/:kind?/:hash?' exact render={route => <Read {...route} manifest={this.manifest} />} />
-                      <Route path='/settings' exact render={() => <Settings manifest={this.manifest} availableLanguages={this.availableLanguages} />} />
-                      <Route path='/pride' exact render={() => <Pride />} />
-                      <Route path='/credits' exact render={() => <Credits />} />
-                      <Route path='/resources' exact render={() => <Resources />} />
-                      <Route path='/resources/clan-banner-builder/:decalBackgroundColorId?/:decalColorId?/:decalId?/:gonfalonColorId?/:gonfalonDetailColorId?/:gonfalonDetailId?/:gonfalonId?/' exact render={route => <ClanBannerBuilder {...route} />} />
-                      <Route path='/resources/god-rolls' exact render={() => <GodRolls manifest={this.manifest} />} />
-                      <Route path='/' exact render={() => <Index />} />
-                    </Switch>
-                  </div>
-                  <Route path='/' render={route => <Footer route={route} />} />
-                </div>
-              )}
-            />
-          </Router>
-        );
-      } else {
-        return (
-          <Router>
-            <Route
-              render={route => (
-                <div className={cx('wrapper', themeOverride(route.location.pathname) ? themeOverride(route.location.pathname) : this.props.theme.selected, { 'profile-route': isProfileRoute(route.location.pathname) })}>
-                  <Route path='/' render={route => <NotificationApp updateAvailable={this.props.updateAvailable} />} />
-                  <Route path='/' render={route => <Tooltip {...route} manifest={this.manifest} />} />
-                  <GoogleAnalytics.RouteTracker />
-                  <div className='main'>
-                    <Route path='/' render={route => <Header route={route} {...this.state} {...this.props} themeOverride={themeOverride(route.location.pathname)} manifest={this.manifest} />} />
-                    <Switch>
-                      <Route path='/character-select' render={route => <CharacterSelect location={route.location} viewport={this.state.viewport} manifest={this.manifest} />} />
-                      <Route
-                        path='/account'
-                        exact
-                        render={route => (
-                          <Redirect
-                            to={{
-                              pathname: '/character-select',
-                              state: { from: route.location }
-                            }}
-                          />
-                        )}
-                      />
-                      <Route
-                        path='/clan/:view?/:subView?'
-                        exact
-                        render={route => (
-                          <Redirect
-                            to={{
-                              pathname: '/character-select',
-                              state: { from: route.location }
-                            }}
-                          />
-                        )}
-                      />
-                      <Route
-                        path='/character'
-                        exact
-                        render={route => (
-                          <Redirect
-                            to={{
-                              pathname: '/character-select',
-                              state: { from: route.location }
-                            }}
-                          />
-                        )}
-                      />
-                      <Route
-                        path='/checklists'
-                        exact
-                        render={route => (
-                          <Redirect
-                            to={{
-                              pathname: '/character-select',
-                              state: { from: route.location }
-                            }}
-                          />
-                        )}
-                      />
-                      <Route
-                        path='/collections/:primary?/:secondary?/:tertiary?/:quaternary?'
-                        render={route => (
-                          <Redirect
-                            to={{
-                              pathname: '/character-select',
-                              state: { from: route.location }
-                            }}
-                          />
-                        )}
-                      />
-                      <Route
-                        path='/triumphs/:primary?/:secondary?/:tertiary?/:quaternary?'
-                        render={route => (
-                          <Redirect
-                            to={{
-                              pathname: '/character-select',
-                              state: { from: route.location }
-                            }}
-                          />
-                        )}
-                      />
-                      <Route
-                        path='/this-week'
-                        exact
-                        render={route => (
-                          <Redirect
-                            to={{
-                              pathname: '/character-select',
-                              state: { from: route.location }
-                            }}
-                          />
-                        )}
-                      />
-                      <Route path='/vendors/:hash?' exact render={route => <Vendors {...route} manifest={this.manifest} />} />
-                      <Route path='/read/:kind?/:hash?' exact render={route => <Read {...route} manifest={this.manifest} />} />
-                      <Route path='/settings' exact render={() => <Settings manifest={this.manifest} availableLanguages={this.availableLanguages} />} />
-                      <Route path='/pride' exact render={() => <Pride />} />
-                      <Route path='/credits' exact render={() => <Credits />} />
-                      <Route path='/resources' exact render={() => <Resources />} />
-                      <Route path='/resources/clan-banner-builder/:decalBackgroundColorId?/:decalColorId?/:decalId?/:gonfalonColorId?/:gonfalonDetailColorId?/:gonfalonDetailId?/:gonfalonId?/' exact render={route => <ClanBannerBuilder {...route} />} />
-                      <Route path='/resources/god-rolls' exact render={() => <GodRolls manifest={this.manifest} />} />
-                      <Route path='/' render={() => <Index />} />
-                    </Switch>
-                  </div>
-                  <Route path='/' render={route => <Footer route={route} />} />
-                </div>
-              )}
-            />
-          </Router>
-        );
-      }
+      return <Loading state={this.state.status} theme={this.props.theme} />;
     }
+
+    return (
+      <BrowserRouter>
+        <Route
+          render={route => (
+            <div className={cx('wrapper', this.props.theme.selected)}>
+              <NotificationBar updateAvailable={this.props.updateAvailable} />
+              {/* <NotificationOverlay /> */}
+              <NotificationProgress />
+
+              {/* Don't run the refresh service if we're currently selecting
+                a character, as the refresh will cause the member to
+                continually reload itself */}
+              <Route path='/character-select' children={({ match, ...rest }) => !match && <RefreshService {...this.props} />} />
+
+              <Tooltip {...route} />
+              <Route component={GoogleAnalytics.GoogleAnalytics} />
+              <div className='main'>
+                <Switch>
+                  <Route path='/:membershipType([1|2|4])/:membershipId([0-9]+)/:characterId([0-9]+)' component={ProfileRoutes} />} />
+                  <Route
+                    render={() => (
+                      <>
+                        <Route render={route => <Header route={route} {...this.state} {...this.props} />} />
+                        <Switch>
+                          <RedirectRoute path='/clan' />
+                          <RedirectRoute path='/legend' exact />
+                          <RedirectRoute path='/sit-rep' exact />
+                          <RedirectRoute path='/competitive' exact />
+                          <RedirectRoute path='/checklists' exact />
+                          <RedirectRoute path='/collections/' />
+                          <RedirectRoute path='/triumphs' />
+                          <RedirectRoute path='/this-week' exact />
+
+                          <Route path='/character-select' exact component={CharacterSelect} />
+                          <Route path='/inspect/:hash?' exact component={Inspect} />
+                          <Route path='/read/:kind?/:hash?' exact component={Read} />
+                          <Route path='/settings' exact render={() => <Settings availableLanguages={this.availableLanguages} />} />
+                          <Route path='/faq' exact component={FAQ} />
+                          <Route path='/credits' exact component={Credits} />
+                          <Route path='/leaderboards' exact component={Leaderboards} />
+                          <Route path='/resources' exact component={Resources} />
+                          <Route path='/resources/clan-banner-builder/:decalBackgroundColorId?/:decalColorId?/:decalId?/:gonfalonColorId?/:gonfalonDetailColorId?/:gonfalonDetailId?/:gonfalonId?/' exact component={ClanBannerBuilder} />
+                          <Route path='/oob' component={OOB} />
+                          <Route path='/' component={Index} />
+                        </Switch>
+                      </>
+                    )}
+                  />
+                </Switch>
+              </div>
+              <Footer />
+            </div>
+          )}
+        />
+      </BrowserRouter>
+    );
   }
 }
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     theme: state.theme
   };
 }

@@ -2,8 +2,7 @@ import React from 'react';
 
 import ObservedImage from '../../ObservedImage';
 
-const ui = (manifest, perk) => {
-
+const ui = perk => {
   return (
     <div className='perk'>
       <ObservedImage className='image icon' src={`https://www.bungie.net${perk.displayProperties.icon}`} />

@@ -1,0 +1,389 @@
+#competitive {
+  padding: 4rem 3rem 0;
+  display: block;
+}
+
+#competitive > .modes > .mode {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-gap: 3rem;
+  margin: 0 0 3rem;
+}
+
+#competitive > .modes > .mode .properties {
+  margin: 0 0 1rem;
+  position: relative;
+}
+
+#competitive > .modes > .mode .properties .image {
+  top: -1rem;
+  left: unset;
+  right: 0;
+  width: 40%;
+  padding-bottom: 40%;
+  filter: blur(2px);
+}
+
+#competitive > .modes > .mode .properties .name {
+  margin: 0 0 3px;
+  font-size: 18px;
+}
+
+#competitive > .modes > .mode .properties .resets {
+  font-size: 14px;
+}
+
+#competitive .mode .pgcr .list li .basic {
+  display: grid;
+  width: 100%;
+  height: 38px;
+  position: relative;
+  padding: 0 1rem;
+  grid-template-columns: max-content max-content 3rem 3rem 3rem auto;
+  align-items: center;
+  font-size: 14px;
+}
+
+#competitive .mode .pgcr .list li .basic::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 4px;
+  background-color: rgba(255, 0, 0, 0.6);
+}
+
+#competitive .mode .pgcr .list li.victory .basic::before {
+  background-color: rgba(255, 255, 255, 0);
+}
+
+#competitive .mode .pgcr .list li .basic .mode {
+  font-size: 16px;
+  min-width: 10rem;
+}
+
+#competitive .mode .pgcr .list li .basic .map {
+  min-width: 10rem;
+}
+
+#competitive .mode .pgcr .list li .basic .ago {
+  text-align: right;
+}
+
+#competitive .mode .pgcr .list li.isExpanded {
+  height: unset;
+  display: block;
+  background-color: hsla(0, 0%, 100%, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#competitive .mode .pgcr .list li.isExpanded:hover::before,
+#competitive .mode .pgcr .list li.isExpanded:hover::after {
+  box-shadow: none;
+}
+
+.list li.linked:hover::before, .list li.tooltip:hover::before {
+  box-shadow: inset 0 0 0 1px #d6d6d6;
+}
+
+#competitive .mode .pgcr .list li .head {
+  position: relative;
+  width: 100%;
+  height: 27vw;
+}
+
+#competitive .mode .pgcr .list li .head .image.bg {
+  background-size: cover;
+  filter: brightness(0.8);
+}
+
+#competitive .mode .pgcr .list li .head .detail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+}
+
+#competitive .mode .pgcr .list li .head .detail > div:last-child {
+  text-align: right;
+}
+
+#competitive .mode .pgcr .list li .head .detail .map,
+#competitive .mode .pgcr .list li .head .detail .ago {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#competitive .mode .pgcr .list li .head .standing {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 65%;
+  display: grid;
+  align-items: end;
+  justify-items: center;
+}
+
+#competitive .mode .pgcr .list li .head .standing .image {
+  position: relative;
+  top: unset;
+  left: unset;
+  width: 65%;
+  height: 65%;
+  max-width: 390px;
+  max-height: 390px;
+}
+
+#competitive .mode.gambit .pgcr .list li .head .standing .image {
+  width: 50%;
+  height: 50%;
+}
+
+#competitive .mode .pgcr .list li .head .standing .text {
+  position: absolute;
+  top: 80%;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  font-size: 1.4vw;
+  font-weight: 500;
+  letter-spacing: 0.12vw;
+}
+
+#competitive .mode .pgcr .list li .head .score {
+  position: absolute;
+  top: 70%;
+  left: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 3px;
+}
+
+#competitive .mode .pgcr .list li .head .score .value {
+  position: relative;
+  font-size: 1.6vw;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  text-align: center;
+  width: 6vw;
+  padding: 10px 16px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+#competitive .mode .pgcr .list li .head .score .value:first-child {
+  justify-self: right;
+}
+
+#competitive .mode .pgcr .list li .head .score .value.bravo.victory {
+  background-color: #4772b3;
+}
+
+#competitive .mode .pgcr .list li .head .score .value.alpha.victory {
+  background-color: #ab2521;
+}
+
+#competitive .mode .pgcr .list li .entries {
+  padding: 1rem;
+}
+
+#competitive .mode .pgcr .list li .entries .list.team {
+  margin: 0 0 1rem;
+}
+
+#competitive .mode .pgcr .list li .entries .list.team:last-child {
+  margin: 0;
+}
+
+#competitive .mode .pgcr .list li .entries .list li {
+  display: grid;
+  grid-template-columns: calc(38px + 16px) 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  font-size: 14px;
+}
+
+#competitive .mode .pgcr .list li .entries .list li:last-child {
+  margin: 0;
+}
+
+#competitive .mode .pgcr .list li .entries .list .team-head {
+  position: relative;
+  background-color: #4772b3;
+  overflow: hidden;
+  line-height: 1.1;
+}
+
+#competitive .mode .pgcr .list li .entries .list .team-head.alpha {
+  background-color: #ab2521;
+}
+
+#competitive .mode .pgcr .list li .entries .list .team-head::before {
+  content: '\e9ed';
+  top: -5px;
+  left: 16px;
+  font-family: 'destiny' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 48px;
+  opacity: 0.2;
+}
+
+#competitive .mode .pgcr .list li .entries .list .team-head.alpha::before {
+  content: '\e9ee';
+}
+
+#competitive .mode .pgcr .list li .entries .list .team-head div:not(.team) {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+#competitive .mode .pgcr .list li .entries .list .team-head .team.score {
+  padding: 0 16px 0 0;
+  text-align: right;
+}
+
+#competitive .mode .pgcr .list li .entries .list li .icon {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  background-color: hsla(0, 0%, 100%, 0.05);
+}
+
+#competitive .mode .pgcr .list li .entries .list li .displayName {
+  font-size: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+#competitive .mode .pgcr .list li .entries .list li .displayName.dnf::after {
+  content: 'DNF';
+  display: block;
+  padding: 0 16px 0 0;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+#competitive .mode .pgcr .list li .sticky-nav a {
+  position: relative;
+  display: initial;
+  padding: initial;
+}
+
+@media screen and (max-width: 768px) {
+  #competitive {
+    padding: 3rem 2rem 0;
+  }
+
+  #competitive > .modes > .mode {
+    grid-template-columns: 1fr;
+    grid-gap: 2rem;
+  }
+
+  #competitive .mode .pgcr .list li .basic {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  #competitive .mode .pgcr .list li .basic > div {
+    display: none;
+  }
+
+  #competitive .mode .pgcr .list li .basic .mode,
+  #competitive .mode .pgcr .list li .basic .map {
+    display: inherit;
+  }
+
+  #competitive .mode .pgcr .list li .basic .map {
+    text-align: right;
+    min-width: unset;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #competitive .mode .pgcr .list li .head {
+    width: 100%;
+    height: 38vh;
+  }
+
+  #competitive .mode .pgcr .list li .head .detail {
+    font-size: 14px;
+  }
+
+  #competitive .mode .pgcr .list li .head .detail > div:first-child {
+    grid-template-columns: calc(38px + 10px) auto;
+  }
+
+  #competitive .mode .pgcr .list li .head .detail .icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  #competitive .mode .pgcr .list li .head .standing .text {
+    font-size: 3vh;
+    letter-spacing: 0.25vh;
+    margin: 0 0 1vh;
+  }
+  
+  #competitive .mode .pgcr .list li .head .score {
+    width: 100%;
+  }
+  
+  #competitive .mode .pgcr .list li .head .score .value {
+    width: 12vh;
+    font-size: 3vh;
+  }
+
+  #competitive .mode .pgcr .list li .entries .list li .displayName {
+    font-size: 14px;
+  }
+
+  #competitive .mode .pgcr .list li .entries .list li {
+    grid-template-columns: calc(38px + 16px) 2fr 1fr;
+    font-size: 12px;
+  }
+
+  #competitive .mode .pgcr .list li .entries .list li > div {
+    display: none;
+  }
+
+  #competitive .mode .pgcr .list li .entries .list .team-head .team.name,
+  #competitive .mode .pgcr .list li .entries .list .team-head > div:first-child {
+    display: initial;
+  }
+
+  #competitive .mode .pgcr .list li .entries .list li .icon,
+  #competitive .mode .pgcr .list li .entries .list li .opponents-defeated,
+  #competitive .mode .pgcr .list li .entries .list li .motes-deposited {
+    display: initial;
+  }
+
+  #competitive .mode .pgcr .list li .entries .list .isExpandedPlayer {
+    height: unset;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  #competitive .mode .pgcr .list li .entries .list .isExpandedPlayer .pairs {
+    grid-column: 2/4;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    margin: 16px 0 10px;
+  }
+
+  #competitive .mode .pgcr .list li .entries .list .isExpandedPlayer .pairs div {
+    margin: 0 0 6px;
+  }
+
+  #competitive .mode .pgcr .list li .entries .list .isExpandedPlayer .pairs .key {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+
+}

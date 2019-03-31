@@ -7,7 +7,7 @@
   {
     "date": "2018-12-27T03:41:32.815Z",
     "version": "1.1.0",
-    "content": "\n## Changes\n- Added NotificationApp component\n- Changed index.js into AppEntry component in order to handle callbacks from ServiceWorker to notify the aforementioned of a pending update\n- Amended some minor styles\n- Fixed an ObservedImage component bug\n- Removed index.css because it literally did nothing\n\n## Conversation\nThe long-awaited update notification has finally landed. It's been a long time coming because I've never used ServiceWorkers before. I keep typing ServiceWalkers instead of ServiceWorkers which I find super strange.\n\nAnyway, the basic idea–as far as I understand it–behind ServiceWorkers is that they run behind the code that actually drives Braytech or other sites and apps. They silently perform tasks in the background like checking for new code. When they find new code, they tell the browser, and the next time the users visits–after closing all tabs of the site–the browser installs and runs the new code.\n\nLots of fun capabilities come with ServiceWorkers, like making web apps feel more like offline native apps. The reason I use them is for how effectively they cache frequently used assets. Subsequent visits to Braytech load instantly. We all like this.\n"
+    "content": "\n## Changes\n- Added NotificationBar component\n- Changed index.js into AppEntry component in order to handle callbacks from ServiceWorker to notify the aforementioned of a pending update\n- Amended some minor styles\n- Fixed an ObservedImage component bug\n- Removed index.css because it literally did nothing\n\n## Conversation\nThe long-awaited update notification has finally landed. It's been a long time coming because I've never used ServiceWorkers before. I keep typing ServiceWalkers instead of ServiceWorkers which I find super strange.\n\nAnyway, the basic idea–as far as I understand it–behind ServiceWorkers is that they run behind the code that actually drives Braytech or other sites and apps. They silently perform tasks in the background like checking for new code. When they find new code, they tell the browser, and the next time the users visits–after closing all tabs of the site–the browser installs and runs the new code.\n\nLots of fun capabilities come with ServiceWorkers, like making web apps feel more like offline native apps. The reason I use them is for how effectively they cache frequently used assets. Subsequent visits to Braytech load instantly. We all like this.\n"
   },
   {
     "date": "2018-12-27T12:49:58.234Z",
@@ -163,5 +163,85 @@
     "date": "2019-01-31T14:12:12.710Z",
     "version": "1.3.24",
     "content": "## Changes\n- Added new option to settings page enabling view of invisible collectibles. Hidden by default."
+  },
+  {
+    "date": "2019-02-06T08:10:09.685Z",
+    "version": "1.3.25",
+    "content": "## Changes\n- Enormous changes behind the scenes\n- New clan roster\n- New icons for progress bars on triumph records"
+  },
+  {
+    "date": "2019-02-06T09:04:14.067Z",
+    "version": "1.3.26",
+    "content": "## Changes\n- bug spray"
+  },
+  {
+    "date": "2019-02-07T06:34:48.596Z",
+    "version": "1.3.28",
+    "content": "## Changes\n- bug spray"
+  },
+  {
+    "date": "2019-02-14T04:41:39.471Z",
+    "version": "2.0.0",
+    "content": "## Changes\n- Vastly different under the hood\n- Membership IDs in URLs\n- Vendors view deprecated\n- Design overhaul\n\n## Conversation\nHi! Lot's of changes. Membership IDs are now all over the app's URLs so you can easily share your view with a fellow Guardian and vice versa.\n\nPreviously, you might access: `https://braytech.org/triumphs/3685363199/2993089843/231845845/3324094091`. This URL doesn't contain any player context. You can still share a URL like this one to direct others to your view, but if you want to brag, you'd share a URL like: `https://braytech.org/1/4611686018449662397/2305843009260574394/triumphs/3685363199/2993089843/231845845/3324094091`.\n\nThis was an incredibly great undertaking and I was aided by Michael Pearson in its implementation. Braytech does a lot of stuff under the hood to try and be smarter and improve the user's experience. Examples include, remembering your profile and automatically loading it as soon as possible upon you opening the app. Coupled with the changes to URLs, this sort of thing is complicated and requires very thorough testing.\n\nIn addition to loading your profile ASAP, it also refreshes your profile data every 60 seconds in the background - another layer of complexity.\n\nSo there's that.\n\nTom, why are Vendors gone... So, I like to do few things excellently, rather than lots of things forgettably. I believe most of you feel the same way. DIM, the official Companion app, and others already handle vendors. I don't need to try and compete with them. Braytech isn't an item manager!\n\nOn the technical side, vendor data requires OAuth to access - you know, when a web site sends you to Bungie.net to authorise access for their app - and Braytech stears clear of that complexity. The vendor data I was making available was a cached reflection of my own character's. So as I collected items, etc., they'd suddenly disappear from Braytech's view. Additionally, some vendors sell class-specific items - I couldn't show you the correct gear... Unless you're a Warlock of course.\n\nI get a lot of a questions about clan stats. Here's the thing... clan stats were drawn from a particular part of Destiny's API that is often unreliable. I had far too many players come and tell me they've done far many more than 0 Nightfalls. You can see where this is going... Additionally, with this major update, it became infeasible to maintain the messy code that I wrote to drive it. I'd need to start from scratch. While we're on the topic of clan stats, certain stats in the roster view are drawn from the same source and therefore are unreliable and may be on the chopping block."
+  },
+  {
+    "date": "2019-02-19T17:34:45.881Z",
+    "version": "2.1.0",
+    "content": "## Changes\n- Various minor improvements\n- Rewrote mission critical triumph records code and nothing broke so that's tip top\n- All new Legend (account) view\n\n## Conversation\nThe new Legend view is the first time I've accessed and manipulated PGCR (Post Game Carnage Reports) data from the API. Naturally, I'm still learning how to use them and what I should do with them. _Pardon our dust._\n\nAs always, it's a work in progress.\n\nKeep in contact on Twitter @justrealmilk"
+  },
+  {
+    "date": "2019-02-20T14:41:31.654Z",
+    "version": "2.1.1",
+    "content": "## Changes\n- Additional raid data for the Legend view\n\n## Conversation\nRaid measurements are complicated and can differ between raids themselves. This is my initial attempt at displaying raid stats based on PGCRs. Raid.report operates on similar principles but have it refined into a precise art.\n\nThese preliminary stats count only full clears. Counting full clears, again, appears to differ between raids and I'm still learning. Stats which I do feel are reliable are fastest full clear and flawless runs."
+  },
+  {
+    "date": "2019-02-21T21:48:35.927Z",
+    "version": "2.1.3",
+    "content": "## Changes\n- Added a FAQ\n- Improved mobile nav"
+  },
+  {
+    "date": "2019-02-23T06:43:58.968Z",
+    "version": "2.1.6",
+    "content": "## Changes\n- Bug squash round up\n- Added top Ko-fi supports to Credits view\n- Changed my tone on raid stats - now showing all clears irrespective of checkpoints"
+  },
+  {
+    "date": "2019-02-25T06:51:02.453Z",
+    "version": "2.2.0",
+    "content": "## Changes\n- Legend view low screen res improvements\n- `REDACTED` added"
+  },
+  {
+    "date": "2019-02-25T09:18:18.725Z",
+    "version": "2.2.1",
+    "content": "## Changes\n- Competitive view added (preview)"
+  },
+  {
+    "date": "2019-03-03T11:24:10.745Z",
+    "version": "2.2.4",
+    "content": "## Changes\n- so many files altered. this is a round-up update.\n- the Sit Rep view is new\n\n## Conversation\nWhy the Sit Rep view? I didn't like the idea of forcing a user to download all of this API data as soon as they rock up to Braytech. So, I've adjusted the default view."
+  },
+  {
+    "date": "2019-03-05T17:33:43.234Z",
+    "version": "2.2.5",
+    "content": "## Changes\n- Drifter day bug slam"
+  },
+  {
+    "date": "2019-03-09T12:29:08.263Z",
+    "version": "2.2.6",
+    "content": "## Changes\n- Quality of life improvements\n- Additional Drifter assets\n- Addition of percentage of Braytech users who've completed a triumph record added to each record"
+  },
+  {
+    "date": "2019-03-11T04:26:44.497Z",
+    "version": "2.3.0",
+    "content": "## Changes\n- Profile privacy error correctly renders once more\n- Other things but I'm tired\n- Inspect view for items - kind of beta"
+  },
+  {
+    "date": "2019-03-11T14:42:14.395Z",
+    "version": "2.3.1",
+    "content": "## Changes\n- Added Lore to Inspect view"
+  },
+  {
+    "date": "2019-03-13T08:16:31.435Z",
+    "version": "2.3.2",
+    "content": "## Changes\n- Bye, Service Worker."
   }
 ]

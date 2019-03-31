@@ -8,11 +8,10 @@ import ChecklistFactoryHelpers from './ChecklistFactoryHelpers';
 import ReactMarkdown from 'react-markdown';
 
 class ChecklistFactory {
-  constructor(t, profile, manifest, characterId, hideCompletedItems) {
+  constructor(t, profile, characterId, hideCompletedItems) {
     this.t = t;
-    this.manifest = manifest;
     this.profile = profile;
-    this.m = new ChecklistFactoryHelpers(t, profile, manifest, characterId, hideCompletedItems);
+    this.m = new ChecklistFactoryHelpers(t, profile, characterId, hideCompletedItems);
   }
 
   adventures() {
@@ -143,8 +142,8 @@ class ChecklistFactory {
 
   ghostStories() {
     return this.m.recordChecklist({
-      name: this.t('Ghost Stories'),
-      icon: 'destiny-book_ghost_stories',
+      name: this.t('Lore: Ghost Stories'),
+      icon: 'destiny-ghost',
       items: this.m.presentationItems(1420597821),
       progressDescription: this.t('Stories found')
     });
@@ -152,17 +151,17 @@ class ChecklistFactory {
 
   awokenOfTheReef() {
     return this.m.recordChecklist({
-      name: this.t('Awoken of the Reef'),
-      icon: 'destiny-book_awoken_reef',
+      name: this.t('Lore: Awoken of the Reef'),
+      icon: 'destiny-trapped_in_amber',
       items: this.m.presentationItems(3305936921),
-      progressDescription: this.t('Crystals scanned')
+      progressDescription: this.t('Crystals resolved')
     });
   }
 
   forsakenPrince() {
     return this.m.recordChecklist({
-      name: this.t('Forsaken Prince'),
-      icon: 'destiny-book_forsaken_prince',
+      name: this.t('Lore: Forsaken Prince'),
+      icon: 'destiny-forsaken_prince',
       items: this.m.presentationItems(655926402),
       progressDescription: this.t('Data caches decrypted')
     });

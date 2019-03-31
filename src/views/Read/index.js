@@ -5,6 +5,7 @@ import { withNamespaces } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 
+import manifest from '../../utils/manifest';
 import ObservedImage from '../../components/ObservedImage';
 import { enumerateRecordState } from '../../utils/destinyEnums';
 
@@ -40,13 +41,13 @@ class Read extends React.Component {
   };
 
   recordState = hash => {
-    if (!this.props.profile.data) {
+    if (!this.props.member.data) {
       return 0;
     }
 
-    const characterRecords = this.props.profile.data.profile.characterRecords.data;
-    const profileRecords = this.props.profile.data.profile.profileRecords.data.records;
-    const characterId = this.props.profile.characterId;
+    const characterRecords = this.props.member.data.profile.characterRecords.data;
+    const profileRecords = this.props.member.data.profile.profileRecords.data.records;
+    const characterId = this.props.member.characterId;
 
     let state;
     if (profileRecords[hash]) {
@@ -61,7 +62,7 @@ class Read extends React.Component {
   };
 
   render() {
-    const { t, manifest } = this.props;
+    const { t } = this.props;
     const kind = this.props.match.params.kind ? this.props.match.params.kind : false;
     const hash = this.props.match.params.hash ? this.props.match.params.hash : false;
     const bookCovers = {
@@ -79,7 +80,13 @@ class Read extends React.Component {
       2026987060: '037E-00001328.png',
       2325462143: '037E-00001323.png',
       2203266100: '0560-000000CF.png',
-      756584948: '0560-000000CA.png'
+      756584948: '0560-000000CA.png',
+      3148269494: '0560-00001070.png',
+      2741070862: '0560-00001065.png',
+      3758802814: '0560-00001060.png',
+      139066480: '0560-0000105C.png',
+      3762408250: '0560-00001074.png',
+      289742222: '0560-0000106A.png'
     };
 
     let parentDefinition;
@@ -183,7 +190,7 @@ class Read extends React.Component {
 function mapStateToProps(state, ownProps) {
   return {
     theme: state.theme,
-    profile: state.profile
+    member: state.member
   };
 }
 

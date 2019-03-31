@@ -7,12 +7,12 @@ import moment from 'moment';
 import Globals from '../../utils/globals';
 import assign from 'lodash/assign';
 import orderBy from 'lodash/orderBy';
-import merge from 'lodash/merge';
 import ObservedImage from '../../components/ObservedImage';
 import Spinner from '../../components/Spinner';
+import manifest from '../../utils/manifest';
 
 import './stats.css';
-import {withNamespaces} from "react-i18next";
+import { withNamespaces } from 'react-i18next';
 
 class StatsView extends React.Component {
   constructor(props) {
@@ -166,8 +166,7 @@ class StatsView extends React.Component {
   }
 
   render() {
-    const manifest = this.props.manifest;
-    const {t} = this.props;
+    const { t } = this.props;
     const groups = this.props.profile.data.groups;
     const clan = groups.results.length > 0 ? groups.results[0].group : false;
 
@@ -208,7 +207,7 @@ class StatsView extends React.Component {
             value: stats.allPvE.reduce((sum, member) => {
               return sum + member.secondsPlayed.basic.value;
             }, 0),
-            ordered: orderBy(raw, [member => member.allPvE ? member.allPvE.secondsPlayed.basic.value : false], ['desc']).map(member => {
+            ordered: orderBy(raw, [member => (member.allPvE ? member.allPvE.secondsPlayed.basic.value : false)], ['desc']).map(member => {
               return { membershipId: member.membershipId, secondsPlayed: member.allPvE ? member.allPvE.secondsPlayed.basic.value : false };
             })
           },
@@ -216,7 +215,7 @@ class StatsView extends React.Component {
             value: stats.allPvE.reduce((sum, member) => {
               return sum + member.kills.basic.value;
             }, 0),
-            ordered: orderBy(raw, [member => member.allPvE ? member.allPvE.kills.basic.value : false], ['desc']).map(member => {
+            ordered: orderBy(raw, [member => (member.allPvE ? member.allPvE.kills.basic.value : false)], ['desc']).map(member => {
               return { membershipId: member.membershipId, kills: member.allPvE ? member.allPvE.kills.basic.value : false };
             })
           },
@@ -224,7 +223,7 @@ class StatsView extends React.Component {
             value: stats.allPvE.reduce((sum, member) => {
               return sum + member.deaths.basic.value;
             }, 0),
-            ordered: orderBy(raw, [member => member.allPvE ? member.allPvE.deaths.basic.value : false], ['desc']).map(member => {
+            ordered: orderBy(raw, [member => (member.allPvE ? member.allPvE.deaths.basic.value : false)], ['desc']).map(member => {
               return { membershipId: member.membershipId, deaths: member.allPvE ? member.allPvE.deaths.basic.value : false };
             })
           },
@@ -234,7 +233,7 @@ class StatsView extends React.Component {
                 return sum + member.killsDeathsRatio.basic.value;
               }, 0) / stats.allPvE.length
             ).toFixed(2),
-            ordered: orderBy(raw, [member => member.allPvE ? member.allPvE.killsDeathsRatio.basic.value : false], ['desc']).map(member => {
+            ordered: orderBy(raw, [member => (member.allPvE ? member.allPvE.killsDeathsRatio.basic.value : false)], ['desc']).map(member => {
               return { membershipId: member.membershipId, killsDeathsRatio: member.allPvE ? member.allPvE.killsDeathsRatio.basic.value : false };
             })
           },
@@ -242,7 +241,7 @@ class StatsView extends React.Component {
             value: stats.allPvE.reduce((sum, member) => {
               return sum + member.orbsDropped.basic.value;
             }, 0),
-            ordered: orderBy(raw, [member => member.allPvE ? member.allPvE.orbsDropped.basic.value : false], ['desc']).map(member => {
+            ordered: orderBy(raw, [member => (member.allPvE ? member.allPvE.orbsDropped.basic.value : false)], ['desc']).map(member => {
               return { membershipId: member.membershipId, orbsDropped: member.allPvE ? member.allPvE.orbsDropped.basic.value : false };
             })
           },
@@ -250,7 +249,7 @@ class StatsView extends React.Component {
             value: stats.allPvE.reduce((sum, member) => {
               return sum + member.publicEventsCompleted.basic.value;
             }, 0),
-            ordered: orderBy(raw, [member => member.allPvE ? member.allPvE.publicEventsCompleted.basic.value : false], ['desc']).map(member => {
+            ordered: orderBy(raw, [member => (member.allPvE ? member.allPvE.publicEventsCompleted.basic.value : false)], ['desc']).map(member => {
               return { membershipId: member.membershipId, publicEvents: member.allPvE ? member.allPvE.publicEventsCompleted.basic.value : false };
             })
           },
@@ -258,7 +257,7 @@ class StatsView extends React.Component {
             value: stats.allPvE.reduce((sum, member) => {
               return sum + member.adventuresCompleted.basic.value;
             }, 0),
-            ordered: orderBy(raw, [member => member.allPvE ? member.allPvE.adventuresCompleted.basic.value : false], ['desc']).map(member => {
+            ordered: orderBy(raw, [member => (member.allPvE ? member.allPvE.adventuresCompleted.basic.value : false)], ['desc']).map(member => {
               return { membershipId: member.membershipId, adventures: member.allPvE ? member.allPvE.adventuresCompleted.basic.value : false };
             })
           }
@@ -717,7 +716,11 @@ class StatsView extends React.Component {
 
           let stat;
           if (keys[1] === 'secondsPlayed') {
-            stat = <>{Math.ceil(moment.duration(rank[keys[1]], 'seconds').as('days'))} {t('days')}</>;
+            stat = (
+              <>
+                {Math.ceil(moment.duration(rank[keys[1]], 'seconds').as('days'))} {t('days')}
+              </>
+            );
           } else if (keys[1] === 'killsDeathsRatio') {
             stat = rank[keys[1]] ? Number(rank[keys[1]]).toFixed(2) : null;
           } else if (keys[1] === 'winRatio') {
@@ -729,7 +732,7 @@ class StatsView extends React.Component {
           return (
             <li key={member.member.destinyUserInfo.membershipId} className={cx('linked', { thisIsYou: rank.membershipId === this.props.membershipId })}>
               <div className='rank'>
-                <div className='value'></div>
+                <div className='value' />
               </div>
               <div className='displayName'>{member.member.destinyUserInfo.displayName}</div>
               <div className='stat'>{stat}</div>
@@ -755,7 +758,9 @@ class StatsView extends React.Component {
                   <div className='value'>
                     {timePlayed.years() < 1 ? (
                       timePlayed.months() < 1 ? (
-                        <>{timePlayed.days()} {t('days')} </>
+                        <>
+                          {timePlayed.days()} {t('days')}{' '}
+                        </>
                       ) : (
                         <>
                           {timePlayed.months()} {t('months')}, {timePlayed.days()} {t('days')}'
@@ -874,8 +879,8 @@ class StatsView extends React.Component {
               </div>
             </div>
             <div className='flair-gambit'>
-              <div className='l1 destiny-gambit_dazzle'></div>
-              <div className='l2 destiny-gambit_dazzle'></div>
+              <div className='l1 destiny-gambit_dazzle' />
+              <div className='l2 destiny-gambit_dazzle' />
             </div>
           </>
         );
@@ -894,7 +899,9 @@ class StatsView extends React.Component {
                   <div className='value'>
                     {timePlayed.years() < 1 ? (
                       timePlayed.months() < 1 ? (
-                        <>{timePlayed.days()} {t('days')} </>
+                        <>
+                          {timePlayed.days()} {t('days')}{' '}
+                        </>
                       ) : (
                         <>
                           {timePlayed.months()} {t('months')}, {timePlayed.days()} {t('days')}'
@@ -970,7 +977,9 @@ class StatsView extends React.Component {
                   <div className='value'>
                     {timePlayed.years() < 1 ? (
                       timePlayed.months() < 1 ? (
-                        <>{timePlayed.days()} {t('days')} </>
+                        <>
+                          {timePlayed.days()} {t('days')}{' '}
+                        </>
                       ) : (
                         <>
                           {timePlayed.months()} {t('months')}, {timePlayed.days()} {t('days')}
@@ -1065,7 +1074,9 @@ class StatsView extends React.Component {
                   <div className='value'>
                     {timePlayed.years() < 1 ? (
                       timePlayed.months() < 1 ? (
-                        <>{timePlayed.days()} {t('days')} </>
+                        <>
+                          {timePlayed.days()} {t('days')}{' '}
+                        </>
                       ) : (
                         <>
                           {timePlayed.months()} {t('months')}, {timePlayed.days()} {t('days')}
@@ -1168,7 +1179,9 @@ class StatsView extends React.Component {
               <div className='views'>
                 <ul className='list'>
                   <li className='linked'>
-                    <NavLink to='/clan' exact>{t('About')}</NavLink>
+                    <NavLink to='/clan' exact>
+                      {t('About')}
+                    </NavLink>
                   </li>
                   <li className='linked'>
                     <NavLink to='/clan/roster'>{t('Roster')}</NavLink>
@@ -1177,7 +1190,9 @@ class StatsView extends React.Component {
                     <NavLink to='/clan/stats'>{t('Stats')}</NavLink>
                   </li>
                   <li className='linked child'>
-                    <NavLink to='/clan/stats' exact>{t('Vanguard')}</NavLink>
+                    <NavLink to='/clan/stats' exact>
+                      {t('Vanguard')}
+                    </NavLink>
                   </li>
                   <li className='linked child'>
                     <NavLink to='/clan/stats/crucible'>{t('Crucible')}</NavLink>
@@ -1219,8 +1234,6 @@ function mapStateToProps(state, ownProps) {
 }
 
 export default compose(
-  connect(
-    mapStateToProps
-  ),
+  connect(mapStateToProps),
   withNamespaces()
 )(StatsView);

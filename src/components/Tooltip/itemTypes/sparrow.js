@@ -2,8 +2,9 @@ import React from 'react';
 import cx from 'classnames';
 
 import { getSockets } from '../../../utils/destinyItems';
+import manifest from '../../../utils/manifest';
 
-const sparrow = (manifest, item) => {
+const sparrow = item => {
   let sockets = [];
 
   let sourceString = item.collectibleHash ? (manifest.DestinyCollectibleDefinition[item.collectibleHash] ? manifest.DestinyCollectibleDefinition[item.collectibleHash].sourceString : false) : false;
@@ -11,7 +12,7 @@ const sparrow = (manifest, item) => {
   let description = item.displayProperties.description !== '' ? item.displayProperties.description : false;
 
   if (item.sockets) {
-    sockets = getSockets(manifest, item, false, true, [1608119540]).sockets;
+    sockets = getSockets(item, false, true, [1608119540]).sockets;
   }
 
   return (

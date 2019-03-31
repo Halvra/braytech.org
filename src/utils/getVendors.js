@@ -4,19 +4,18 @@ import Globals from './globals';
 import store from './reduxStore';
 
 async function apiRequest() {
-
   const vendors = [
     {
       slug: 'spider',
-      hash: '863940356',
+      hash: '863940356'
     },
     {
       slug: 'banshee',
-      hash: '672118013',
+      hash: '672118013'
     },
     {
       slug: 'tess',
-      hash: '3361454721',
+      hash: '3361454721'
     },
     {
       slug: 'xur',
@@ -45,12 +44,9 @@ async function apiRequest() {
 }
 
 export async function getVendors() {
-  
-  
   let data = await apiRequest();
 
   store.dispatch({ type: 'SET_VENDORS', payload: data });
-  
 }
 
 export default getVendors;

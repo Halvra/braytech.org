@@ -5,6 +5,7 @@ import { withNamespaces } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 
+import { ProfileLink } from '../../components/ProfileLink';
 import Root from './Root';
 import SealNode from './SealNode';
 import PresentationNode from './PresentationNode';
@@ -17,9 +18,7 @@ class Triumphs extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      
-    };
+    this.state = {};
 
     this.toggleCompleted = this.toggleCompleted.bind(this);
   }
@@ -29,7 +28,7 @@ class Triumphs extends React.Component {
     let newState = {
       hideTriumphRecords: !currentState.hideTriumphRecords,
       hideChecklistItems: currentState.hideChecklistItems
-    }
+    };
 
     this.props.setCollectibleDisplayState(newState);
   };
@@ -41,16 +40,13 @@ class Triumphs extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      (!this.props.match.params.quaternary && prevProps.location.pathname !== this.props.location.pathname) 
-      || (!prevProps.match.params.quaternary && this.props.location.pathname === '/triumphs/almost-complete' && prevProps.location.pathname !== this.props.location.pathname)
-    ) {
+    if ((!this.props.match.params.quaternary && prevProps.location.pathname !== this.props.location.pathname) || (!prevProps.match.params.quaternary && this.props.location.pathname === '/triumphs/almost-complete' && prevProps.location.pathname !== this.props.location.pathname)) {
       window.scrollTo(0, 0);
     }
   }
 
   render() {
-    const {t} = this.props;
+    const { t } = this.props;
     let primaryHash = this.props.match.params.primary ? this.props.match.params.primary : false;
 
     let toggleCompletedLink = (
@@ -65,7 +61,6 @@ class Triumphs extends React.Component {
           <>
             <i className='uniF16B' />
             {t('Hide redeemed')}
-            
           </>
         )}
       </a>
@@ -90,10 +85,10 @@ class Triumphs extends React.Component {
             <ul>
               <li>{toggleCompletedLink}</li>
               <li>
-                <Link to={backLinkPath}>
+                <ProfileLink to={backLinkPath}>
                   <i className='uniF094' />
                   {t('Back')}
-                </Link>
+                </ProfileLink>
               </li>
             </ul>
           </div>
@@ -109,10 +104,10 @@ class Triumphs extends React.Component {
             <div />
             <ul>
               <li>
-                <Link to={backLinkPath}>
+                <ProfileLink to={backLinkPath}>
                   <i className='uniF094' />
                   {t('Back')}
-                </Link>
+                </ProfileLink>
               </li>
             </ul>
           </div>
@@ -128,10 +123,10 @@ class Triumphs extends React.Component {
             <div />
             <ul>
               <li>
-                <Link to={backLinkPath}>
+                <ProfileLink to={backLinkPath}>
                   <i className='uniF094' />
                   {t('Back')}
-                </Link>
+                </ProfileLink>
               </li>
             </ul>
           </div>
@@ -148,10 +143,10 @@ class Triumphs extends React.Component {
             <ul>
               <li>{toggleCompletedLink}</li>
               <li>
-                <Link to={backLinkPath}>
+                <ProfileLink to={backLinkPath}>
                   <i className='uniF094' />
                   {t('Back')}
-                </Link>
+                </ProfileLink>
               </li>
             </ul>
           </div>
@@ -163,7 +158,7 @@ class Triumphs extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     collectibles: state.collectibles,
     theme: state.theme
   };
@@ -178,6 +173,9 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
   withNamespaces()
 )(Triumphs);

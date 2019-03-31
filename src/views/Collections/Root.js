@@ -2,18 +2,19 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import { withNamespaces } from 'react-i18next';
+import manifest from '../../utils/manifest';
 
 import ObservedImage from '../../components/ObservedImage';
+import { ProfileLink } from '../../components/ProfileLink';
 import { enumerateCollectibleState } from '../../utils/destinyEnums';
 
 class Root extends React.Component {
   render() {
     const { t } = this.props;
-    const manifest = this.props.manifest;
-    const characterId = this.props.profile.characterId;
+    const characterId = this.props.member.characterId;
 
-    const characterCollectibles = this.props.profile.data.profile.characterCollectibles.data;
-    const profileCollectibles = this.props.profile.data.profile.profileCollectibles.data;
+    const characterCollectibles = this.props.member.data.profile.characterCollectibles.data;
+    const profileCollectibles = this.props.member.data.profile.profileCollectibles.data;
 
     const parent = manifest.DestinyPresentationNodeDefinition[manifest.settings.destiny2CoreSettings.collectionRootNode];
     const parentBadges = manifest.DestinyPresentationNodeDefinition[manifest.settings.destiny2CoreSettings.badgesRootNode];
@@ -28,12 +29,13 @@ class Root extends React.Component {
     if (profileCollectibles.recentCollectibleHashes) {
       profileCollectibles.recentCollectibleHashes.forEach(child => {
         let collectibleDefinition = manifest.DestinyCollectibleDefinition[child];
-  
+
         recentlyDiscovered.push(
           <li key={collectibleDefinition.hash} className={cx('item', 'tooltip')} data-itemhash={collectibleDefinition.itemHash}>
             <div className='icon'>
               <ObservedImage className={cx('image', 'icon')} src={`https://www.bungie.net${collectibleDefinition.displayProperties.icon}`} />
             </div>
+            {collectibleDefinition.itemHash ? <Link to={{ pathname: `/inspect/${collectibleDefinition.itemHash}`, state: { from: '/collections' } }} /> : null}
           </li>
         );
       });
@@ -86,7 +88,7 @@ class Root extends React.Component {
               <span>{states.filter(collectible => !enumerateCollectibleState(collectible).notAcquired).length}</span> / {states.filter(collectible => !enumerateCollectibleState(collectible).invisible).length}
             </div>
           </div>
-          <Link to={`/collections/${node.hash}`} />
+          <ProfileLink to={`/collections/${node.hash}`} />
         </div>
       );
     });
@@ -136,12 +138,12 @@ class Root extends React.Component {
             fullComplete: fullComplete === 3
           })}
         >
-          <Link to={`/collections/badge/${node.hash}`}>
+          <ProfileLink to={`/collections/badge/${node.hash}`}>
             <ObservedImage className={cx('image', 'icon')} src={`https://www.bungie.net${node.originalIcon}`} />
             <div className='text'>
               <div>{node.displayProperties.name}</div>
             </div>
-          </Link>
+          </ProfileLink>
         </li>
       );
     });
@@ -166,7 +168,7 @@ class Root extends React.Component {
             <div>{t('Recently discovered')}</div>
           </div>
           <div className='recently-discovered'>
-            <ul className='list'>{recentlyDiscovered}</ul>
+            <ul className='list'>{recentlyDiscovered.reverse()}</ul>
           </div>
           <div className='sub-header sub'>
             <div>{t('Badges')}</div>

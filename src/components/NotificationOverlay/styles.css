@@ -1,0 +1,24 @@
+#notification-overlay {
+  position: fixed;
+  z-index: 30;
+  width: 100%;
+  height: 100%;
+  padding: 0 3rem;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  color: #000;
+  font-size: 16px;
+}
+
+#notification-overlay > div {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+#notification-overlay div strong {
+  margin: 0 0 1rem;
+  display: block;
+}

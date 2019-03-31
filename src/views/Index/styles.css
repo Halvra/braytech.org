@@ -1,29 +1,79 @@
 #index {
-  height: 100vh;
+  padding: 0;
+  display: block;
 }
 
-#index .image.bg {
-  position: fixed;
-  height: 100vh;
+#index .head {
+  position: relative;
+  margin: -40px 0 0;
+  padding: calc(3rem + 40px) 3rem 3rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  min-height: 32vw;
+  display: grid;
+  align-items: end;
+  overflow: hidden;
+}
+
+#index .head .image.bg {
   background-size: cover;
+  background-position: center center;
+  filter: brightness(0.7);
 }
 
-#index .logo-feature {
-  position: fixed;
-  bottom: 3rem;
-  left: 3rem;
-  font-size: 96px;
+#index .head .device {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  right: 3rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#index .head .device svg {
+  fill: #ffffff;
+  opacity: 0.1;
+  width: auto;
+  height: 42vw;
+}
+
+#index .head .slogan {
+  position: relative;
+  max-width: 1024px;
+}
+
+#index .head .slogan .message {
+  font-size: 4vw;
   font-weight: 500;
-  align-self: flex-end;
+  line-height: 1;
   color: #ffffff;
+}
+
+#index .head .slogan .view-name {
+  margin: 1rem 0 0;
+  line-height: 1;
+  font-size: 24px;
+}
+
+#index .head .slogan a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#index .logo-area {
+  
 }
 
 #index .logo-feature .device {
   position: relative;
-  font-size: 96px;
-  line-height: 84px;
+  font-size: 192px;
+  line-height: 178px;
   display: inline-block;
-  margin: 0 3rem 0 0;
+  color: #ffffff;
 }
 
 #index .logo-feature .device::before,
@@ -32,8 +82,8 @@
   position: absolute;
   top: -20px;
   left: -20px;
-  width: 136px;
-  height: 136px;
+  width: 232px;
+  height: 232px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
   animation: fade-in-logo-feature 7s linear forwards, rotate-logo-feature 21s linear infinite;
 }
@@ -43,52 +93,99 @@
   animation: fade-in-logo-feature 7s linear forwards, rotate-logo-feature 10s linear infinite;
 }
 
-#index .changelog {
-  position: absolute;
-  top: 80vh;
-  right: 3rem;
-  padding: 2rem;
-  width: 40rem;
-  margin: 0 0 3rem;
-  color: rgba(0, 0, 0, 0.8);
-  background-color: #fff;
-}
-
-#index .changelog .entry:not(:last-child) {
-  margin: 0 0 2rem;
-}
-
-#index .changelog .header {
+#index .modules {
+  padding: 3rem;
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 3rem;
 }
 
-#index .changelog .version {
-  font-weight: 500;
-  color: rgba(0, 0, 0, 1);
-  margin: 0 0 0.5rem;
-  font-size: 16px;
-}
-
-#index .changelog time {
-  margin: 0 0 1rem;
-  display: block;
-  justify-self: end;
-  color: rgba(0, 0, 0, 0.4);
+#index .modules .coming-up .text {
   font-size: 14px;
 }
 
-#index .changelog .content p {
+#index .modules .coming-up .text p {
+  line-height: 1.6;
+}
+
+#index .modules .coming-up .text blockquote {
+  margin: 0 0 1rem;
+  padding: 0 0 0 0.6rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+  color:rgba(255, 255, 255, 0.8);
+}
+
+#index .modules .coming-up .text span.destiny-external {
+  margin: 0 0 0 6px;
+  opacity: 0.6;
+}
+
+#index .modules .change-log .log-state {
+  display: flex;
+  justify-content: space-between;
+}
+
+#index .modules .change-log .log-state .meta {
+  flex: 1 1 auto;
+  padding: 0 1rem 0 0;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+#index .modules .change-log .log-state .meta > div {
+  height: 38px;
+  flex: 1 1 auto;
+  display: grid;
+  align-content: center;
+}
+
+#index .modules .change-log .log-state .meta .time {
+  justify-self: end;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+#index .modules .change-log .log-state .buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 38px);
+  grid-gap: 3px;
+}
+
+#index .modules .change-log .log-state .buttons button {
+  width: 38px;
+  justify-content: center;
+  margin: 0;
+}
+
+#index .modules .change-log .log-state .buttons button .text {
+  padding: 0;
+  font-size: 12px;
+}
+
+#index .modules .change-log .log-state .buttons button.disabled {
+  pointer-events: none;
+}
+
+#index .modules .change-log .log-state .buttons button:not(.disabled) {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#index .modules .change-log .log-state .buttons button:not(.disabled)::before {
+  box-shadow: inset 0 0 0 1px rgba(214, 214, 214, 0.8);
+}
+
+#index .modules .change-log .log-content p {
   margin: 0 0 0.5rem;
   font-size: 14px;
   line-height: 1.6;
 }
 
-#index .changelog .content p:last-child {
+#index .modules .change-log .log-content p:last-child {
   margin: 0;
 }
 
-#index .changelog .content p a::before {
+#index .modules .change-log .log-content p a::before {
   content: ' ';
   position: absolute;
   bottom: -3px;
@@ -98,111 +195,78 @@
   opacity: 0.2;
 }
 
-#index .changelog .content h2 {
+#index .modules .change-log .log-content code {
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#index .modules .change-log .log-content h2 {
   margin: 0 0 0.5rem;
   font-size: 14px;
-  font-weight: 500;
   line-height: 1.6;
 }
 
-#index .changelog .content h2:not(:first-child) {
+#index .modules .change-log .log-content h2:not(:first-child) {
   margin: 1rem 0 0.5rem;
 }
 
-#index .changelog .content ul {
+#index .modules .change-log .log-content ul {
   list-style-type: disc;
   padding: 0 0 0 2rem;  
   margin: 0 0 1rem;
 }
 
-#index .changelog .content ul li {
+#index .modules .change-log .log-content ul li {
   font-size: 14px;
   line-height: 1.6;
 }
 
-
+#index .modules > .description {
+  font-size: 16px;
+}
 
 
 
 @media screen and (max-width: 1200px) {
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) {
   #index {
+    
+  }
+
+  #index .head {
+    padding: calc(2rem + 40px) 2rem 2rem;
+    min-height: 45vw;
+  }
+
+  #index .head .device {
+    right: -3rem;
+  }
+  
+  #index .head .device svg {
+    height: 110%;
+  }
+
+  #index .head .slogan .message {
+    font-size: 8vw;
+  }
+
+  #index .head .slogan .link {
+    font-size: 18px;
+  }
+
+  #index .modules {
     padding: 2rem;
-    grid-gap: 2rem;
     grid-template-columns: 1fr;
-    height: unset;
+    grid-gap: 2rem;
   }
 
-  #index .image.bg {
-    background-position: 60% center;
-  }
-
-  #index .logo-feature {
-    bottom: unset;
-    left: 2rem;
-    top: 60vh;
-    font-size: 50px;
-    font-weight: 500;
-  }
-
-  #index .logo-feature .device {
-    position: relative;
-    font-size: 50px;
-    line-height: 44px;
-    margin: 0 1rem 0 0;
-  }
-
-  #index .logo-feature .device::before,
-  #index .logo-feature .device::after {
-    top: -10px;
-    left: -10px;
-    width: 70px;
-    height: 70px;
-  }
-
-  #index .changelog {
-    position: absolute;
-    top: calc(60vh + 50px + 3rem);
-    right: 0;
-    padding: 2rem;
-    width: 100%;
-    margin: 0;
-  }
-
-  #index .changelog .content p {
-    margin: 0 0 0.5rem;
-    font-size: 14px;
-    line-height: 1.6;
+  #index .modules > .description {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem 0 0;
   }
   
-  #index .changelog .content p:last-child {
-    margin: 0;
-  }
-  
-  #index .changelog .content h2 {
-    margin: 0 0 0.5rem;
-    font-size: 14px;
-    line-height: 1.6;
-  }
-  
-  #index .changelog .content ul li {
-    font-size: 14px;
-    line-height: 1.6;
-  }
-}
-
-
-#index.dark-mode .changelog {
-  color: rgba(255, 255, 255, 0.8);
-  background-color: #131313;
-}
-
-#index.dark-mode .changelog .version {
-  color: rgb(255, 255, 255);
-}
-
-#index.dark-mode .changelog time {
-  color: rgba(255, 255, 255, 0.4);
 }

@@ -4,8 +4,9 @@ import cx from 'classnames';
 import Globals from '../../../utils/globals';
 import ObservedImage from '../../ObservedImage';
 import { getSockets } from '../../../utils/destinyItems';
+import manifest from '../../../utils/manifest';
 
-const emblem = (manifest, item) => {
+const emblem = item => {
   let sockets = [];
 
   let sourceString = item.collectibleHash ? (manifest.DestinyCollectibleDefinition[item.collectibleHash] ? manifest.DestinyCollectibleDefinition[item.collectibleHash].sourceString : false) : false;

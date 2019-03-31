@@ -14,16 +14,8 @@
   position: absolute;
 }
 
-#banner-builder .options .header .name {
-  margin: 1rem 0 0;
-  font-size: 38px;
-  font-weight: 500;
-}
-
-#banner-builder .options .header .description {
+#banner-builder .options .page-header {
   max-width: 30rem;
-  font-size: 14px;
-  margin: 1rem 0 0;
 }
 
 #banner-builder .options .config .spinner {
@@ -53,7 +45,7 @@
 
 #banner-builder .options .config .optionSet .option {
   position: relative;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 #banner-builder .options .config .optionSet .option::before {
@@ -65,7 +57,7 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0);
   transition: box-shadow 0.25s;
 }
 
@@ -78,24 +70,24 @@
   height: calc(100% + 4px);
   z-index: 3;
   pointer-events: none;
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0);
   transition: box-shadow 0.25s;
 }
 
 #banner-builder .options .config .optionSet .option.active::after {
-  box-shadow: 0 0 0 2px #222;
+  box-shadow: 0 0 0 2px #eee;
 }
 
 #banner-builder .options .config .optionSet .option:hover {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 #banner-builder .options .config .optionSet .option:hover::before {
-  box-shadow: inset 0 0 0 1px #222;
+  box-shadow: inset 0 0 0 1px #eee;
 }
 
 #banner-builder .options .config .optionSet .option:hover::after {
-  box-shadow: 0 0 0 2px #222;
+  box-shadow: 0 0 0 2px #eee;
 }
 
 #banner-builder .options .config .optionSet.decals .decal {
@@ -103,11 +95,11 @@
 }
 
 #banner-builder .options .config .optionSet.decals .decal .image {
-  filter: invert(0.4);
+  opacity: 0.6;
 }
 
 #banner-builder .options .config .optionSet.decals .decal .image:nth-child(2) {
-  filter: invert(0.8);
+  opacity: 0.4;
 }
 
 #banner-builder .options .config .optionSet.gonfalonDetails .decal {
@@ -116,7 +108,7 @@
 }
 
 #banner-builder .options .config .optionSet.gonfalonDetails .decal .image {
-  filter: invert(0.8);
+  opacity: 0.6;
 }
 
 #banner-builder .options .config .optionSet.colors .option {
@@ -147,58 +139,7 @@
     grid-gap: 0;
   }
 
-  #banner-builder .options .header .name {
-    font-size: 32px;
-  }
-
   #banner-builder .options .config .optionSet {
     grid-template-columns: repeat(6, 1fr);
   }
-}
-
-
-
-
-
-
-
-
-#banner-builder.dark-mode .options .config .optionSet .option {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-#banner-builder.dark-mode .options .config .optionSet .option::before {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0);
-}
-
-#banner-builder.dark-mode .options .config .optionSet .option:after {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0);
-}
-
-#banner-builder.dark-mode .options .config .optionSet .option.active::after {
-  box-shadow: 0 0 0 2px #dfdfdf;
-}
-
-#banner-builder.dark-mode .options .config .optionSet .option:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-#banner-builder.dark-mode .options .config .optionSet .option:hover::before {
-  box-shadow: inset 0 0 0 1px #dfdfdf;
-}
-
-#banner-builder.dark-mode .options .config .optionSet .option:hover::after {
-  box-shadow: 0 0 0 2px #dfdfdf;
-}
-
-#banner-builder.dark-mode .options .config .optionSet.decals .decal .image {
-  filter: invert(0.1);
-}
-
-#banner-builder.dark-mode .options .config .optionSet.decals .decal .image:nth-child(2) {
-  filter: invert(0.4);
-}
-
-#banner-builder.dark-mode .options .config .optionSet.gonfalonDetails .decal .image {
-  filter: invert(0.4);
 }

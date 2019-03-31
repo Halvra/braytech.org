@@ -50,24 +50,3 @@
 .check-box.checked .text {
   color: rgba(255, 255, 255, 0.6);
 }
-
-.wrapper.light-mode:not(.profile-route) .check-box .check {
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
-  background-color: rgba(0, 0, 0, 0);
-}
-
-.wrapper.light-mode:not(.profile-route) .check-box .check::after {
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0);
-}
-
-.wrapper.light-mode:not(.profile-route) .check-box:hover .check::after {
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
-}
-
-.wrapper.light-mode:not(.profile-route) .check-box .text {
-  color: rgba(0, 0, 0, 0.8);
-}
-
-.wrapper.light-mode:not(.profile-route) .check-box.checked .text {
-  color: rgba(0, 0, 0, 0.6);
-}

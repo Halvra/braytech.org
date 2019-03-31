@@ -1,21 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import { withNamespaces } from 'react-i18next';
+import manifest from '../../utils/manifest';
 
 import ObservedImage from '../../components/ObservedImage';
 import Collectibles from '../../components/Collectibles';
+import * as paths from '../../utils/paths';
 import { enumerateCollectibleState } from '../../utils/destinyEnums';
 
 class BadgeNode extends React.Component {
   render() {
     const { t } = this.props;
-    const manifest = this.props.manifest;
-    const characterId = this.props.profile.characterId;
+    const characterId = this.props.member.characterId;
 
-
-    const characterCollectibles = this.props.profile.data.profile.characterCollectibles.data;
-    const profileCollectibles = this.props.profile.data.profile.profileCollectibles.data;
+    const characterCollectibles = this.props.member.data.profile.characterCollectibles.data;
+    const profileCollectibles = this.props.member.data.profile.profileCollectibles.data;
 
     let badgeDefinition = manifest.DestinyPresentationNodeDefinition[this.props.match.params.secondary];
 
@@ -42,7 +41,7 @@ class BadgeNode extends React.Component {
             <div>{nodeDefinition.displayProperties.name}</div>
           </div>
           <ul className='list tertiary collection-items'>
-            <Collectibles {...this.props} {...this.state} node={node.presentationNodeHash} />
+            <Collectibles {...this.props} {...this.state} node={node.presentationNodeHash} inspect selfLinkFrom={paths.removeMemberIds(this.props.location.pathname)} />
           </ul>
         </div>
       );
@@ -98,7 +97,8 @@ class BadgeNode extends React.Component {
       2399267278: '037E-00001D4C.png',
       701100740: '01A3-0000189C.png',
       1420354007: '01E3-0000032C.png',
-      1086048586: '01E3-00000377.png'
+      1086048586: '01E3-00000377.png',
+      2503214417: '0560-00000D7D.png'
     };
 
     //`https://www.bungie.net${badgeDefinition.displayProperties.icon}`

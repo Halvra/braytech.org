@@ -6,49 +6,24 @@
   display: flex;
   padding: 0 3rem;
   width: 100%;
+  margin: 0 auto;
+  max-width: 1920px;
 }
 
 .wrapper {
-  background-color: #f1f1f1;
-  color: #000;
-}
-
-.wrapper.light-mode {
-  background-color: #f1f1f1;
-}
-
-.wrapper.light-mode.profile-route {
   background-color: #888888;
-  color: #fff;
-}
-
-.wrapper.light-mode:not(.profile-route) #footer {
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.wrapper.light-mode:not(.profile-route) #footer ul li:last-child a {
-  color: rgba(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .wrapper.dark-mode {
-  background-color: #131313;
-  color: #fff;
-}
-
-.wrapper.dark-mode.profile-route {
   background-color: #212121;
 }
-
 .wrapper.dark-mode #footer {
   color: rgba(255, 255, 255, 0.6);
 }
 
 .wrapper.dark-mode #footer ul li:last-child a {
   color: rgba(255, 255, 255, 0.8);
-}
-
-.wrapper.profile-route #footer {
-  background-color: rgba(255, 255, 255, 0.05);
 }
 
 h3 {
@@ -381,22 +356,53 @@ button.square.active {
   margin: 0 0 1rem;
 }
 
+.page-header {
+  position: relative;
+  margin: 24px 0 3rem;
+}
+
+.page-header::before {
+  content: ' ';
+  position: absolute;
+  top: -24px;
+  left: -16px;
+  padding: 16px 16px 24px;
+  width: 48px;
+  height: 100%;
+  box-shadow: inset 0 0 0 1px #ffffff;
+  opacity: 0.2;
+}
+
+.page-header::after {
+  content: ' ';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  width: 32px;
+  border-bottom: 3px solid #ffffff;
+  opacity: 0.2;
+}
+
+.page-header .name {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.page-header .description {
+  margin: 10px 0 0;
+  font-size: 18px;
+}
+
 @media screen and (max-width: 600px) {
   .sub-header {
     margin: 2rem 2rem 1rem;
     width: calc(100% - 4rem);
   }
-}
 
-.wrapper.light-mode:not(.profile-route) .sub-header {
-  border-bottom: 2px solid rgba(0, 0, 0, 0.6);
-  background-color: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.wrapper.light-mode:not(.profile-route) .sub-header.sub {
-  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
-  background-color: rgba(0, 0, 0, 0);
+  .page-header .name {
+    font-size: 36px;
+  }
 }
 
 #error {
@@ -502,9 +508,18 @@ html.backdropfilter .sticky-nav{
 
 .sticky-nav ul li {
   margin: 0 0 0 2rem;
+  font-size: inherit;
+  display: inherit;
+  color: inherit;
+  transition: inherit;
+  height: inherit;
 }
 
-@media screen and (max-width: 500px) {
+.sticky-nav.inline {
+  padding: 1rem 1rem 1rem;
+}
+
+@media screen and (max-width: 600px) {
   .sticky-nav {
     width: 100%;
     padding: 1rem 2rem;
@@ -526,4 +541,16 @@ html.backdropfilter .sticky-nav{
   100% {
     background-color: rgba(255, 255, 255, 0);
   }
+}
+
+.profile-route-loading {
+  padding: 3rem;
+}
+
+@media screen and (max-width: 600px) {
+
+  .profile-route-loading {
+    padding: 2rem;
+  }
+
 }

@@ -5,15 +5,22 @@
   grid-template-columns: repeat(5, 1fr);
 }
 
+#settings .module.head {
+  grid-column: 1/6;
+}
+
+#settings .module.head .page-header {
+  margin: 24px 0 1rem;
+}
+
 #settings .module.language button {
   margin: 2rem 0 0;
   font-size: 16px;
 }
 
-#settings .module .description {
+#settings .module:not(.head) .description {
   font-size: 14px;
   margin: 0 0 1rem;
-  color: rgba(0, 0, 0, 0.8);
 }
 
 #settings.dark-mode .module .description {
@@ -24,11 +31,19 @@
   #settings {
     grid-template-columns: repeat(4, 1fr);
   }
+
+  #settings .module.head {
+    grid-column: 1/5;
+  }
 }
 
 @media screen and (max-width: 1200px) {
   #settings {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  #settings .module.head {
+    grid-column: 1/3;
   }
 }
 
@@ -37,6 +52,10 @@
     padding: 2rem;
     grid-gap: 2rem;
     grid-template-columns: repeat(1, 1fr);
+  }
+
+  #settings .module.head {
+    grid-column: 1/2;
   }
 
   #settings .sub-header {

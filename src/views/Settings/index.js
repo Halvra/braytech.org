@@ -36,11 +36,11 @@ class Settings extends React.Component {
     //     hideChecklistItems: false
     //   };
     // } else {
-      newState = {
-        hideTriumphRecords: state === 'hideTriumphRecords' ? !currentState.hideTriumphRecords : currentState.hideTriumphRecords,
-        hideChecklistItems: state === 'hideChecklistItems' ? !currentState.hideChecklistItems : currentState.hideChecklistItems,
-        hideInvisibleCollectibles: state === 'hideInvisibleCollectibles' ? !currentState.hideInvisibleCollectibles : currentState.hideInvisibleCollectibles
-      };
+    newState = {
+      hideTriumphRecords: state === 'hideTriumphRecords' ? !currentState.hideTriumphRecords : currentState.hideTriumphRecords,
+      hideChecklistItems: state === 'hideChecklistItems' ? !currentState.hideChecklistItems : currentState.hideChecklistItems,
+      hideInvisibleCollectibles: state === 'hideInvisibleCollectibles' ? !currentState.hideInvisibleCollectibles : currentState.hideInvisibleCollectibles
+    };
     // }
 
     this.props.setCollectibleDisplayState(newState);
@@ -70,7 +70,7 @@ class Settings extends React.Component {
   render() {
     const { t, availableLanguages } = this.props;
 
-    const complete = ['en', 'de', 'pt-br']
+    const complete = ['en', 'de', 'pt-br'];
     let languageButtons = availableLanguages.map(code => {
       let langInfo = getLanguageInfo(code);
       return (
@@ -116,6 +116,12 @@ class Settings extends React.Component {
 
     return (
       <div className={cx('view', this.props.theme.selected)} id='settings'>
+        <div className='module head'>
+          <div className='page-header'>
+            <div className='name'>{t('Settings')}</div>
+            <div className='description'>{t('Configure Braytech to your liking')}</div>
+          </div>
+        </div>
         <div className='module theme'>
           <div className='sub-header sub'>
             <div>{t('Theme')}</div>
@@ -137,40 +143,6 @@ class Settings extends React.Component {
               }}
             >
               <Checkbox linked checked={this.props.theme.selected === 'dark-mode'} text={t('Lights off')} />
-            </li>
-          </ul>
-        </div>
-        <div className='module refresh-service'>
-          <div className='sub-header sub'>
-            <div>{t('Refresh service')}</div>
-          </div>
-          <div className='description'>{t("Refresh the active profile's data every 30 seconds")}</div>
-          <ul className='list settings'>
-            <li
-              key='enabled'
-              onClick={() => {
-                this.props.setRefreshServiceConfig({
-                  config: {
-                    enabled: true,
-                    frequency: 30
-                  }
-                });
-              }}
-            >
-              <Checkbox linked checked={this.props.refreshService.config.enabled} text={t('Enabled')} />
-            </li>
-            <li
-              key='disabled'
-              onClick={() => {
-                this.props.setRefreshServiceConfig({
-                  config: {
-                    enabled: false,
-                    frequency: 30
-                  }
-                });
-              }}
-            >
-              <Checkbox linked checked={!this.props.refreshService.config.enabled} text={t('Disabled')} />
             </li>
           </ul>
         </div>
@@ -196,10 +168,9 @@ class Settings extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     theme: state.theme,
-    collectibles: state.collectibles,
-    refreshService: state.refreshService
+    collectibles: state.collectibles
   };
 }
 
@@ -210,9 +181,6 @@ function mapDispatchToProps(dispatch) {
     },
     setCollectibleDisplayState: value => {
       dispatch({ type: 'SET_COLLECTIBLES', payload: value });
-    },
-    setRefreshServiceConfig: value => {
-      dispatch({ type: 'SET_REFRESH_OPTIONS', payload: value });
     }
   };
 }

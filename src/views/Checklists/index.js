@@ -63,10 +63,10 @@ export class Checklists extends React.Component {
   };
 
   render() {
-    const { t, profile, manifest, collectibles, theme } = this.props;
+    const { t, member, collectibles, theme } = this.props;
     const { page, itemsPerPage } = this.state;
 
-    const f = new ChecklistFactory(t, profile.data.profile, manifest, profile.characterId, collectibles.hideChecklistItems);
+    const f = new ChecklistFactory(t, member.data.profile, member.characterId, collectibles.hideChecklistItems);
 
     const lists = [
       f.regionChests(), //
@@ -83,7 +83,7 @@ export class Checklists extends React.Component {
       f.forsakenPrince()
     ];
 
-    if (Object.values(profile.data.profile.profileProgression.data.checklists[2448912219]).filter(i => i).length === 4) {
+    if (Object.values(member.data.profile.profileProgression.data.checklists[2448912219]).filter(i => i).length === 4) {
       lists.push(f.caydesJournals());
     }
 
@@ -116,8 +116,7 @@ export class Checklists extends React.Component {
   }
 }
 Checklists.propTypes = {
-  profile: PropTypes.object.isRequired,
-  manifest: PropTypes.object.isRequired,
+  member: PropTypes.object.isRequired,
   collectibles: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   viewport: PropTypes.object.isRequired
@@ -125,9 +124,10 @@ Checklists.propTypes = {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     collectibles: state.collectibles,
-    theme: state.theme
+    theme: state.theme,
+    viewport: state.viewport
   };
 }
 

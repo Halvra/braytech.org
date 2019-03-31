@@ -1,22 +1,9 @@
 import React from 'react';
 import cx from 'classnames';
 
-import ObservedImage from '../../ObservedImage';
+import manifest from '../../../utils/manifest';
 
-const mod = (manifest, item) => {
-
-  let plugs = [];
-  item.perks.forEach(perk => {
-    let plug = manifest.DestinySandboxPerkDefinition[perk.perkHash];
-    plugs.push(
-      <div key={plug.hash} className='plug trait'>
-        <ObservedImage className={cx('image', 'icon')} src={`https://www.bungie.net${plug.displayProperties.icon}`} />
-        <div className='text'>
-          <div className='description'>{plug.displayProperties.description}</div>
-        </div>
-      </div>
-    );
-  });
+const mod = item => {
 
   let stats = [];
   item.investmentStats.forEach(stat => {
@@ -28,14 +15,13 @@ const mod = (manifest, item) => {
       </div>
     );
   });
-
+  
   return (
     <>
       {stats.length > 0 ? <div className='stats'>{stats}</div> : null}
-      <div className={cx('sockets', { 'has-sockets': plugs.length > 0 })}>{plugs.length > 0 ? plugs : null}</div>
-      {item.itemSubType === 21 ? <div className='description'>
+      <div className={cx('description', { 'has-stats': stats.length })}>
         <pre>{item.displayProperties.description}</pre>
-      </div> : null}
+      </div>
     </>
   );
 };

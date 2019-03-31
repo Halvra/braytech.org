@@ -2,7 +2,7 @@ import React from 'react';
 
 import ObservedImage from '../../ObservedImage';
 
-const subclass = (manifest, item) => {
+const subclass = item => {
   return (
     <div className='perk'>
       <ObservedImage className='image icon' src={`https://www.bungie.net${item.displayProperties.icon}`} />

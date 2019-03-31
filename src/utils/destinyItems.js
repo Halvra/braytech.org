@@ -4,6 +4,7 @@ import orderBy from 'lodash/orderBy';
 
 import Globals from './globals';
 import ObservedImage from '../components/ObservedImage';
+import manifest from './manifest';
 
 const interpolate = (investmentValue, displayInterpolation) => {
   const interpolation = [...displayInterpolation].sort((a, b) => a.value - b.value);
@@ -32,7 +33,7 @@ const interpolate = (investmentValue, displayInterpolation) => {
   return Math.round(displayValue);
 };
 
-export const getSockets = (manifest, item, traitsOnly = false, mods = true, initialOnly = false, socketExclusions = []) => {
+export const getSockets = (item, traitsOnly = false, mods = true, initialOnly = false, socketExclusions = [], uiStyleTooltips = false) => {
   let statGroup = item.stats ? manifest.DestinyStatGroupDefinition[item.stats.statGroupHash] : false;
 
   let statModifiers = [];
@@ -42,7 +43,7 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
   let socketsOutput = [];
 
   // console.log(item);
-  
+
   if (item.sockets) {
     let socketEntries = item.sockets.socketEntries;
     if (item.itemComponents && item.itemComponents.sockets) {
@@ -90,7 +91,7 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
 
       socket.reusablePlugItems.forEach(reusablePlug => {
         let plug = manifest.DestinyInventoryItemDefinition[reusablePlug.plugItemHash];
-        
+
         // console.log(reusablePlug, plug, socket);
 
         if (plug.hash === socket.singleInitialItemHash) {
@@ -104,9 +105,8 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
                 value: modifier.value
               });
             }
-            
-            if (masterworkSocketHash.includes(socket.socketTypeHash)) {
 
+            if (masterworkSocketHash.includes(socket.socketTypeHash)) {
               // console.log(item, reusablePlug, plug, socket);
 
               let index = statModifiersMasterworks.findIndex(stat => stat.statHash === modifier.statTypeHash);
@@ -120,23 +120,18 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
               }
 
               const killTracker = socketEntries.find(socket => socket.plugObjectives && socket.plugObjectives.length);
-    
+
               // console.log(killTracker, socketEntries);
-            
-              if (
-                killTracker &&
-                killTracker.plugObjectives &&
-                killTracker.plugObjectives.length
-              ) {
+
+              if (killTracker && killTracker.plugObjectives && killTracker.plugObjectives.length) {
                 const plugObjective = killTracker.plugObjectives[0];
 
                 masterworkKillTracker = {
                   plugHash: plug.hash,
                   progress: plugObjective,
                   objectiveDefinition: manifest.DestinyObjectiveDefinition[plugObjective.objectiveHash]
-                }
+                };
               }
-
             }
           });
         }
@@ -160,7 +155,7 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
           active: plug.hash === socket.singleInitialItemHash,
           definition: plug,
           element: (
-            <div key={plug.hash} className={cx('plug', 'tooltip', { 'is-intrinsic': plug.itemCategoryHashes.includes(2237038328), 'is-active': plug.hash === socket.singleInitialItemHash })} data-itemhash={plug.hash}>
+            <div key={plug.hash} className={cx('plug', 'tooltip', { 'is-intrinsic': plug.itemCategoryHashes.includes(2237038328), 'is-active': plug.hash === socket.singleInitialItemHash })} data-itemhash={plug.hash} data-tooltiptype={ uiStyleTooltips ? 'ui' : '' }>
               <ObservedImage className={cx('image', 'icon')} src={`${Globals.url.bungie}${plug.displayProperties.icon}`} />
               <div className='text'>
                 <div className='name'>{plug.displayProperties.name}</div>
@@ -177,7 +172,7 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
         singleInitialItem = {
           definition: plug,
           element: (
-            <div key={plug.hash} className={cx('plug', 'tooltip', { 'is-intrinsic': plug.itemCategoryHashes.includes(2237038328), 'is-active': plug.hash === socket.singleInitialItemHash })} data-itemhash={plug.hash}>
+            <div key={plug.hash} className={cx('plug', 'tooltip', { 'is-intrinsic': plug.itemCategoryHashes.includes(2237038328), 'is-active': plug.hash === socket.singleInitialItemHash })} data-itemhash={plug.hash} data-tooltiptype={ uiStyleTooltips ? 'ui' : '' }>
               <ObservedImage className={cx('image', 'icon')} src={`${Globals.url.bungie}${plug.displayProperties.icon}`} />
               <div className='text'>
                 <div className='name'>{plug.displayProperties.name}</div>
@@ -212,7 +207,7 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
   let statsOutput = [];
 
   // console.log(socketsOutput, statModifiersMasterworks)
-  
+
   if (item.itemType === 3) {
     statGroup.scaledStats.forEach(stat => {
       let statModifier = statModifiers.find(modifier => modifier.statHash === stat.statHash);
@@ -223,7 +218,7 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
         let modifier = statModifier ? statModifier.value : 0;
 
         let instanceStat = item.itemComponents && item.itemComponents.stats ? Object.values(item.itemComponents.stats).find(s => s.statHash === stat.statHash) : false;
-        
+
         let investmentStat = item.investmentStats.find(investment => investment.statTypeHash === stat.statHash);
         let scaledStats = statGroup.scaledStats.find(scale => scale.statHash === stat.statHash);
 
@@ -294,7 +289,7 @@ export const getSockets = (manifest, item, traitsOnly = false, mods = true, init
   };
 };
 
-export const getOrnaments = (manifest, hash) => {
+export const getOrnaments = hash => {
   let item = manifest.DestinyInventoryItemDefinition[hash];
 
   let ornaments = [];

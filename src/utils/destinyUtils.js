@@ -1,4 +1,7 @@
 import React from 'react';
+import orderBy from 'lodash/orderBy';
+
+import manifest from './manifest';
 
 // TODO: we can just use itemCategoryHashes for this now?
 export const isOrnament = item => item.inventory && item.inventory.stackUniqueLabel && item.plug && item.plug.plugCategoryIdentifier && item.plug.plugCategoryIdentifier.includes('skins');
@@ -26,6 +29,32 @@ export function genderTypeToString(str) {
   return string;
 }
 
+export function groupMemberTypeToString(str) {
+  let string;
+
+  switch (str) {
+    case 1:
+      string = 'Beginner';
+      break;
+    case 2:
+      string = 'Member';
+      break;
+    case 3:
+      string = 'Admin';
+      break;
+    case 4:
+      string = 'Acting Founder';
+      break;
+    case 5:
+      string = 'Founder';
+      break;
+    default:
+      string = 'None';
+  }
+
+  return string;
+}
+
 export function raceTypeToString(str) {
   let string;
 
@@ -46,16 +75,16 @@ export function raceTypeToString(str) {
   return string;
 }
 
-export function classHashToString(hash, manifest, gender) {
+export function classHashToString(hash, gender) {
   let classDef = manifest.DestinyClassDefinition[hash];
   if (!classDef) return 'uh oh';
   if (classDef.genderedClassNames) {
-    return classDef.genderedClassNames[gender == 1 ? 'Female' : 'Male'];
+    return classDef.genderedClassNames[gender === 1 ? 'Female' : 'Male'];
   }
   return classDef.displayProperties.name;
 }
 
-export function raceHashToString(hash, manifest, gender) {
+export function raceHashToString(hash, gender) {
   let raceDef = manifest.DestinyRaceDefinition[hash];
   if (!raceDef) return 'uh oh';
   if (raceDef.genderedRaceNames) {
@@ -64,7 +93,7 @@ export function raceHashToString(hash, manifest, gender) {
   return raceDef.displayProperties.name;
 }
 
-export function getDefName(hash, manifest, defType = 'DestinyInventoryItemDefinition') {
+export function getDefName(hash, defType = 'DestinyInventoryItemDefinition') {
   try {
     return manifest[defType][hash].displayProperties.name;
   } catch (e) {}
@@ -91,21 +120,37 @@ export function classTypeToString(str) {
   return string;
 }
 
-export function membershipTypeToString(str) {
+export function membershipTypeToString(str, short = false) {
   let string;
 
-  switch (str) {
-    case 1:
-      string = 'Xbox';
-      break;
-    case 2:
-      string = 'PlayStation';
-      break;
-    case 4:
-      string = 'PC';
-      break;
-    default:
-      string = 'uh oh';
+  if (short) {
+    switch (str) {
+      case 1:
+        string = 'XB';
+        break;
+      case 2:
+        string = 'PS';
+        break;
+      case 4:
+        string = 'PC';
+        break;
+      default:
+        string = '??';
+    }
+  } else {
+    switch (str) {
+      case 1:
+        string = 'Xbox';
+        break;
+      case 2:
+        string = 'PlayStation';
+        break;
+      case 4:
+        string = 'PC';
+        break;
+      default:
+        string = 'uh oh';
+    }
   }
 
   return string;
@@ -155,29 +200,32 @@ export function ammoTypeToString(type) {
 }
 
 function stringToIconsWrapper(string) {
-  return <span className={`destiny-${string}`} />
+  return <span key={`icon-${string}`} className={`destiny-${string}`} />;
 }
 
 export function stringToIcons(string) {
   let array = [];
 
   let equivalents = {
-    "[Sniper Rifle]": "sniper_rifle",
-    "[Headshot]": "headshot",
-    "[Auto Rifle]": "auto_rifle",
-    "[Pulse Rifle]": "pulse_rifle",
-    "[Scout Rifle]": "scout_rifle",
-    "[Hand Cannon]": "hand_cannon",
-    "[Sidearm]": "sidearm",
-    "[SMG]": "smg",
-    "[Shotgun]": "shotgun",
-    "[Fusion Rifle]": "fusion_rifle",
-    "[Linear Fusion Rifle]": "wire_rifle",
-    "[Trace Rifle]": "beam_weapon",
-    "[Rocker Launcher]": "rocket_launcher",
-    "[Sword]": "sword_heavy",
-    "[Grenade Launcher]": "grenade_launcher"
-  }
+    '[Sniper Rifle]': 'sniper_rifle',
+    '[Headshot]': 'headshot',
+    '[Auto Rifle]': 'auto_rifle',
+    '[Pulse Rifle]': 'pulse_rifle',
+    '[Scout Rifle]': 'scout_rifle',
+    '[Hand Cannon]': 'hand_cannon',
+    '[Sidearm]': 'sidearm',
+    '[SMG]': 'smg',
+    '[Shotgun]': 'shotgun',
+    '[Fusion Rifle]': 'fusion_rifle',
+    '[Linear Fusion Rifle]': 'wire_rifle',
+    '[Trace Rifle]': 'beam_weapon',
+    '[Rocker Launcher]': 'rocket_launcher',
+    '[Sword]': 'sword_heavy',
+    '[Grenade Launcher]': 'grenade_launcher',
+    '[Bow]': 'bow',
+    '[Machine Gun]': 'machinegun',
+    '[Machine Gune]': 'machinegun'    
+  };
 
   array = string.split(/(\[.*?\])/g);
 
@@ -197,7 +245,7 @@ export function stringToIcons(string) {
 }
 
 // thank you DIM (https://github.com/DestinyItemManager/DIM/blob/master/src/app/inventory/store/well-rested.ts)
-export function isWellRested(characterProgression, manifest) {
+export function isWellRested(characterProgression) {
   // We have to look at both the regular progress and the "legend" levels you gain after hitting the cap.
   // Thanks to expansions that raise the level cap, you may go back to earning regular XP after getting legend levels.
   const levelProgress = characterProgression.progressions[1716568313];
@@ -214,10 +262,7 @@ export function isWellRested(characterProgression, manifest) {
 
   const progress = legendProgress.weeklyProgress;
 
-  const requiredXP =
-    xpRequiredForLevel(legendProgress.level, legendProgressDef) +
-    xpRequiredForLevel(legendProgress.level - 1, legendProgressDef) +
-    xpRequiredForLevel(legendProgress.level - 2, legendProgressDef);
+  const requiredXP = xpRequiredForLevel(legendProgress.level, legendProgressDef) + xpRequiredForLevel(legendProgress.level - 1, legendProgressDef) + xpRequiredForLevel(legendProgress.level - 2, legendProgressDef);
 
   // Have you gained XP equal to three full levels worth of XP?
   return {
@@ -233,4 +278,59 @@ export function isWellRested(characterProgression, manifest) {
 function xpRequiredForLevel(level, progressDef) {
   const stepIndex = Math.min(Math.max(0, level), progressDef.steps.length - 1);
   return progressDef.steps[stepIndex].progressTotal;
+}
+
+export function lastPlayerActivity(member) {
+  let lastActivity = false;
+  let lastCharacter = false;
+  let lastMode = false
+  let display = false;
+
+  if (member.profile.characterActivities.data) {
+    let lastCharacterActivity = Object.entries(member.profile.characterActivities.data);
+    lastCharacterActivity = orderBy(lastCharacterActivity, [character => character[1].dateActivityStarted], ['desc']);
+    lastCharacterActivity = lastCharacterActivity.length > 0 ? lastCharacterActivity[0] : false;
+
+    let lastCharacterTime = Object.entries(member.profile.characterActivities.data);
+    lastCharacterTime = orderBy(lastCharacterTime, [character => character[1].dateActivityStarted], ['desc']);
+
+    let lastCharacterId = lastCharacterActivity ? lastCharacterActivity[0] : lastCharacterTime[0];
+    lastActivity = lastCharacterActivity ? lastCharacterActivity[1] : false;
+
+    lastCharacter = member.profile.characters.data.find(character => character.characterId === lastCharacterId);
+
+    if (lastActivity && member.isOnline) {
+      let activity = manifest.DestinyActivityDefinition[lastActivity.currentActivityHash];
+      let mode = activity ? (activity.placeHash === 2961497387 ? false : manifest.DestinyActivityModeDefinition[lastActivity.currentActivityModeHash]) : false;
+
+      if (mode) {
+        display = `${mode.displayProperties.name}: ${activity.displayProperties.name}`;
+      } else if (activity) {
+        if (activity.placeHash === 2961497387) {
+          display = `Orbit`;
+        } else {
+          display = activity.displayProperties.name;
+        }
+      } else {
+        display = false;
+      }
+
+      if ((mode && mode.parentHashes.length) || (activity && activity.placeHash === 2961497387)) {
+        lastMode = activity.placeHash === 2961497387 ? {
+          displayProperties: {
+            name: 'Orbit'
+          }
+        } : manifest.DestinyActivityModeDefinition[mode.parentHashes[0]];
+      }
+    }
+  } else {
+  }
+
+  return {
+    lastPlayed: lastActivity ? lastActivity.dateActivityStarted : member.profile.profile.data.dateLastPlayed,
+    lastCharacter,
+    lastActivity,
+    lastMode,
+    display
+  };
 }

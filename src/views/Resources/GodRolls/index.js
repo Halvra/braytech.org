@@ -2,8 +2,8 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withNamespaces } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import cx from 'classnames';
+import manifest from '../../../utils/manifest';
 
 import Globals from '../../../utils/globals';
 import ObservedImage from '../../../components/ObservedImage';
@@ -50,7 +50,7 @@ class GodRolls extends React.Component {
   componentWillUnmount() {}
 
   render() {
-    const { t, manifest } = this.props;
+    const { t } = this.props;
 
     this.init();
 

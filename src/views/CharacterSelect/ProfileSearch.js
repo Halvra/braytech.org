@@ -1,14 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
+import PropTypes from 'prop-types';
+import debounce from 'lodash/debounce';
 import { withNamespaces } from 'react-i18next';
+
 import * as destinyEnums from '../../utils/destinyEnums';
 import * as ls from '../../utils/localStorage';
-import PropTypes from 'prop-types';
 import * as bungie from '../../utils/bungie';
-import debounce from 'lodash/debounce';
 import Spinner from '../../components/Spinner';
-
-import './styles.css';
 
 const SearchResult = p => (
   <li className='linked'>
@@ -53,7 +52,7 @@ class ProfileSearch extends React.Component {
   };
 
   onSearchKeyPress = e => {
-    // If they pressed enter, ignore the debounce and search right meow.
+    // If they pressed enter, ignore the debounce and search right meow. MEOW, SON.
     if (e.key === 'Enter') this.searchForPlayers.flush();
   };
 
@@ -82,11 +81,7 @@ class ProfileSearch extends React.Component {
     const { results, searching } = this.state;
 
     if (searching) {
-      return (
-        <li>
-          <Spinner />
-        </li>
-      );
+      return null;
     }
 
     if (results && results.length > 0) {
@@ -100,7 +95,7 @@ class ProfileSearch extends React.Component {
 
   render() {
     const { t } = this.props;
-    const { search } = this.state;
+    const { search, searching } = this.state;
 
     let history = ls.get('history.profiles') || [];
 
@@ -116,7 +111,7 @@ class ProfileSearch extends React.Component {
         </div>
 
         <div className='results'>
-          <ul className='list'>{this.resultsElement()}</ul>
+          {searching ? <Spinner mini /> : <ul className='list'>{this.resultsElement()}</ul>}
         </div>
 
         {history.length > 0 && (

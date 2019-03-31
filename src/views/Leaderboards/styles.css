@@ -1,0 +1,27 @@
+#leaderboards {
+  display: grid;
+  padding: 0;
+}
+
+#leaderboards .head {
+  position: relative;
+  width: 100%;
+  padding: 4rem 3rem 0;
+}
+
+#leaderboards .wrap {
+  position: relative;
+  width: 100%;
+  padding: 3rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 3rem;
+}
+
+#leaderboards .wrap .col .board {
+  
+}
+
+#leaderboards .wrap .col .board.triumphScore {
+  
+}

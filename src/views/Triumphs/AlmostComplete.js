@@ -15,7 +15,7 @@ class Root extends React.Component {
           <div className='sub-header sub'>
             <div>{t('Almost complete')}</div>
           </div>
-          <RecordsAlmost {...this.props} limit='100' selfLinkFrom />
+          <RecordsAlmost {...this.props} limit='100' selfLinkFrom='/triumphs/almost-complete' />
         </div>
       </>
     );
@@ -24,7 +24,7 @@ class Root extends React.Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    profile: state.profile,
+    member: state.member,
     theme: state.theme
   };
 }
